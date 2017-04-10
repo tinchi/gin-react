@@ -1,0 +1,2 @@
+web: gin
+webpack: webpack --watch

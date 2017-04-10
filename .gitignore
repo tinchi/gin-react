@@ -1,0 +1,8 @@
+bin
+dist
+node_modules
+tmp
+bindata*
+npm-debug.log
+bundle.js
+gin-bin
