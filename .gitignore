@@ -6,3 +6,4 @@ bindata*
 npm-debug.log
 bundle.js
 gin-bin
+vendor

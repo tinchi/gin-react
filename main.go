@@ -7,7 +7,8 @@ import (
 	"github.com/go-pg/pg"
 	// "github.com/go-pg/pg/orm"
 	"./models"
-	"fmt"
+	// "fmt"
+ //  "reflect"
 )
 
 // * A saving deposit is identified by a
@@ -33,7 +34,18 @@ func depositsIndexEndpoint(c *gin.Context) {
 }
 
 func depositsCreateEndpoint(c *gin.Context) {
-	// c.JSON(http.StatusCreated, deposits[0])
+  var deposit models.Deposit
+
+  if c.Bind(&deposit) == nil {
+
+    err := dbConn.Insert(&deposit)
+    if err != nil {
+      panic(err)
+    }
+
+    c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+  }
+
 }
 
 var dbConn *pg.DB
