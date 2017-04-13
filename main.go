@@ -16,8 +16,7 @@ func main() {
     Database: "deposit_manager",
   })
 
-
   initializeRoutes()
 
-	router.Run() // listen and serve on 0.0.0.0:8080
+	router.Run()
 }

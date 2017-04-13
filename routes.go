@@ -6,7 +6,7 @@ import (
 
   // "github.com/go-pg/pg"
   // "github.com/go-pg/pg/orm"
-  "./models"
+  "github.com/tinchi/gin-react/models"
   // "fmt"
  //  "reflect"
 )
