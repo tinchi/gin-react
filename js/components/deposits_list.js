@@ -6,6 +6,10 @@ import {
   Link
 } from 'react-router-dom'
 
+import {
+  Button
+} from 'reactstrap';
+
 class DepositRow extends React.Component {
   delete(event) {
     event.preventDefault();
@@ -21,10 +25,7 @@ class DepositRow extends React.Component {
           <Link to={'/deposits/' + this.props.item.id + '/edit'}>{this.props.item.account_number}</Link>
         </td>
         <td>
-          <a href="" onClick={this.delete.bind(this)}>
-          <span
-            className="glyphicon glyphicon-remove hover red"
-            aria-hidden="true"></span></a>
+          <Button color="danger" onClick={this.delete.bind(this)}>remove</Button>{' '}
         </td>
       </tr>
   }
@@ -35,10 +36,10 @@ export default class DepositsList extends React.Component {
     console.log('DepositsList');
 
     return <ListView
-              title='List'
+              title='Deposit List'
               url='v1/deposits'
               collection_name='deposits'
-              columns={['Bank Name', 'Account Number']}
+              columns={['Bank Name', 'Account Number', ""]}
               rowClass={DepositRow}
             />;
   }

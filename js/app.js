@@ -9,7 +9,6 @@ import {
 } from 'react-router-dom'
 
 import DepositsList from './components/deposits_list'
-console.log(DepositsList)
 
 class App extends React.Component {
   render() {
