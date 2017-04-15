@@ -47,6 +47,58 @@ func depositsCreateEndpoint(c *gin.Context) {
   }
 }
 
+func depositsShowEndpoint(c *gin.Context) {
+  var deposit models.Deposit
+
+  id := c.Param("id")
+
+  err := dbConn.Model(&deposit).
+      Where("deposit.id = ?", id).
+      Select()
+
+  if err != nil {
+    panic(err)
+  }
+
+  c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+}
+
+func depositsUpdateEndpoint(c *gin.Context) {
+  var deposit models.Deposit
+
+  id := c.Param("id")
+
+  if c.Bind(&deposit) == nil {
+
+    _, err := dbConn.Model(&deposit).
+        Where("deposit.id = ?", id).
+        Returning("*").
+        Update()
+
+    if err != nil {
+      panic(err)
+    }
+  }
+
+  c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+}
+
+func depositsDeleteEndpoint(c *gin.Context) {
+  var deposit models.Deposit
+
+  id := c.Param("id")
+
+  _, err := dbConn.Model(&deposit).
+    Where("deposit.id = ?", id).
+    Delete()
+
+  if err != nil {
+    panic(err)
+  }
+
+  c.JSON(http.StatusOK, gin.H{})
+}
+
 func initializeRoutes() {
   router.Static("/assets", "./assets")
   router.StaticFile("/", "./assets/index.html")
@@ -56,5 +108,8 @@ func initializeRoutes() {
   {
     v1.GET("/deposits", depositsIndexEndpoint)
     v1.POST("/deposits", depositsCreateEndpoint)
+    v1.GET("/deposits/:id", depositsShowEndpoint)
+    v1.PUT("/deposits/:id", depositsUpdateEndpoint)
+    v1.DELETE("/deposits/:id", depositsDeleteEndpoint)
   }
 }
