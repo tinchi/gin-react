@@ -55,9 +55,6 @@ export default class ListView extends React.Component {
   }
 
   onSuccess(response) {
-    console.log("onSuccess")
-    console.log(response.data[this.props.collection_name])
-
     this.setState({
       items: response.data[this.props.collection_name]
     })

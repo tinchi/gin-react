@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom'
 
 import DepositsList from './components/deposits_list'
+import DepositEntryEdit from './components/deposit_entry_edit'
 
 class App extends React.Component {
   render() {
@@ -36,6 +37,7 @@ class Routes extends React.Component {
 
         <Route exact path="/" component={App}/>
         <Route path="/deposits" component={DepositsList}/>
+        <Route path="/deposits/:id/edit" component={DepositEntryEdit}/>
       </div>
     </Router>
   }
