@@ -101,8 +101,6 @@ func depositsDeleteEndpoint(c *gin.Context) {
 
 func initializeRoutes() {
   router.Static("/assets", "./assets")
-  router.StaticFile("/", "./assets/index.html")
-  router.StaticFile("/deposits", "./assets/index.html")
 
   v1 := router.Group("/v1")
   {
@@ -112,4 +110,8 @@ func initializeRoutes() {
     v1.PUT("/deposits/:id", depositsUpdateEndpoint)
     v1.DELETE("/deposits/:id", depositsDeleteEndpoint)
   }
+
+  router.NoRoute(func(c *gin.Context) {
+    c.File("./assets/index.html")
+  })
 }
