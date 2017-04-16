@@ -9,6 +9,7 @@ import {
 
 import DepositsList from './components/deposits_list'
 import DepositEntryEdit from './components/deposit_entry_edit'
+import DepositEntryNew from './components/deposit_entry_new'
 
 class App extends React.Component {
   render() {
@@ -30,14 +31,15 @@ class Routes extends React.Component {
         <ul>
           <li><Link to="/">Home</Link></li>
           <li><Link to="/deposits">Deposits</Link></li>
+          <li><Link to="/deposits/new">New Deposit</Link></li>
         </ul>
 
         <hr/>
 
-        <Route exact path="/" component={App}/>
 
 
         <Route exact path="/deposits" component={DepositsList}/>
+        <Route exact path="/deposits/new" component={DepositEntryNew}/>
         <Route exact path="/deposits/:id/edit" component={DepositEntryEdit}/>
       </div>
     </Router>
