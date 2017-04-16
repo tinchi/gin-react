@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom'
 
 import {
   BrowserRouter as Router,
-  StaticRouter, // for server rendering
   Route,
   Link
-} from 'react-router-dom'
+} from 'react-router-dom';
 
 import DepositsList from './components/deposits_list'
 import DepositEntryEdit from './components/deposit_entry_edit'
@@ -36,8 +35,10 @@ class Routes extends React.Component {
         <hr/>
 
         <Route exact path="/" component={App}/>
-        <Route path="/deposits" component={DepositsList}/>
-        <Route path="/deposits/:id/edit" component={DepositEntryEdit}/>
+
+
+        <Route exact path="/deposits" component={DepositsList}/>
+        <Route exact path="/deposits/:id/edit" component={DepositEntryEdit}/>
       </div>
     </Router>
   }
