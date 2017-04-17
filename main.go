@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/go-pg/pg"
-	"gopkg.in/gin-gonic/gin.v1"
+	"github.com/gin-gonic/gin"
   "github.com/go-pg/pg/orm"
   "github.com/tinchi/gin-react/models"
 )
@@ -12,6 +12,8 @@ var router *gin.Engine
 
 func main() {
 	router = gin.Default()
+
+	router.Use(gin.Logger())
 
 	dbConn = pg.Connect(&pg.Options{
 		User:     "saint",

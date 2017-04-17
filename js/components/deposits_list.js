@@ -25,6 +25,21 @@ class DepositRow extends React.Component {
           <Link to={'/deposits/' + this.props.item.id + '/edit'}>{this.props.item.account_number}</Link>
         </td>
         <td>
+          {this.props.item.ammount}
+        </td>
+        <td>
+          {this.props.item.start_date}
+        </td>
+        <td>
+          {this.props.item.end_date}
+        </td>
+        <td>
+          {this.props.item.interest}
+        </td>
+        <td>
+          {this.props.item.taxes}
+        </td>
+        <td>
           <Button color="danger" onClick={this.delete.bind(this)}>remove</Button>{' '}
         </td>
       </tr>
@@ -39,7 +54,7 @@ export default class DepositsList extends React.Component {
               title='Deposit List'
               url='v1/deposits'
               collection_name='deposits'
-              columns={['Bank Name', 'Account Number', ""]}
+              columns={['Bank Name', 'Account Number', 'Ammount', 'Start Date', 'End Date', 'Interest', 'Taxes', ""]}
               rowClass={DepositRow}
             />;
   }

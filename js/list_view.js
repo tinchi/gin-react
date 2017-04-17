@@ -79,15 +79,17 @@ export default class ListView extends React.Component {
   }
 
   onDeleteItem(id) {
-    $.ajax({
-      url: 'api/v1/time_entries/' + id + '.json',
-      type: 'DELETE',
-      success: this.onDeleteSuccess
-    });
+    axios.delete('v1/deposits/' + id)
+      .then(this.onDeleteSuccess.bind(this), )
+      .catch(this.onDeleteError.bind(this));
   }
 
   onDeleteSuccess(id) {
     this.pullData()
+  }
+
+  onDeleteError() {
+    console.log('TO implement ListView.onDeleteError')
   }
 
   renderHeader(cols) {

@@ -10,6 +10,7 @@ import {
 import DepositsList from './components/deposits_list'
 import DepositEntryEdit from './components/deposit_entry_edit'
 import DepositEntryNew from './components/deposit_entry_new'
+import Login from './components/login'
 
 class App extends React.Component {
   render() {
@@ -29,14 +30,18 @@ class Routes extends React.Component {
     return <Router>
     <div>
         <ul>
-          <li><Link to="/">Home</Link></li>
+          <li><Link to="/login">Login</Link></li>
+          <li><Link to="/logout">Logout</Link></li>
+
+          {/*<li><Link to="/">Home</Link></li>*/}
           <li><Link to="/deposits">Deposits</Link></li>
           <li><Link to="/deposits/new">New Deposit</Link></li>
-        </ul>
 
+          <li><Link to="/">Revenue Report</Link></li>
+        </ul>
         <hr/>
 
-
+        <Route exact path="/login" component={Login}/>
 
         <Route exact path="/deposits" component={DepositsList}/>
         <Route exact path="/deposits/new" component={DepositEntryNew}/>
