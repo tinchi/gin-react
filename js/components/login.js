@@ -53,7 +53,7 @@ export default class Login extends React.Component {
       )
     }
 
-    if (auth.isAuthenticated) {
+    if (auth.isAuthenticated()) {
       return <p>You are already logged in.</p>
     }
 
