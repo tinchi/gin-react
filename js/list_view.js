@@ -85,7 +85,9 @@ export default class ListView extends React.Component {
   }
 
   onDeleteItem(id) {
-    axios.delete('v1/deposits/' + id)
+    axios.delete('v1/deposits/' + id, {
+        "headers": auth.getAuthHeaders()
+      })
       .then(this.onDeleteSuccess.bind(this), )
       .catch(this.onDeleteError.bind(this));
   }

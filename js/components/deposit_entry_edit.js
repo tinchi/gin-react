@@ -3,6 +3,7 @@ import React from 'react'
 import DepositForm from './deposit_form'
 
 import axios from 'axios';
+import auth from '../auth';
 
 export default class DepositEntryEdit extends React.Component {
   constructor(props) {
@@ -13,7 +14,9 @@ export default class DepositEntryEdit extends React.Component {
   }
 
   componentDidMount() {
-    axios.get(this.depositUrl())
+    axios.get(this.depositUrl(), {
+        "headers": auth.getAuthHeaders()
+      })
       .then(this.onGetSuccess.bind(this))
       .catch(this.onGetError.bind(this));
   }

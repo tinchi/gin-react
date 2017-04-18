@@ -9,16 +9,25 @@ import axios from 'axios';
 import qs from 'qs';
 
 import {
-  browserHistory
-} from 'react-router'
+  Redirect,
+} from 'react-router-dom';
+
+import auth from '../auth'
 
 export default class DepositForm extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      createdSuccesfully: false
+    }
+  }
   submitForm(data) {
     console.log("submitForm")
 
     axios({
         method: this.props.method,
         url: this.props.url,
+        headers: auth.getAuthHeaders(),
         data: qs.stringify({
           deposit: data
         })
@@ -29,8 +38,9 @@ export default class DepositForm extends React.Component {
 
   onSubmitSuccess(responce) {
     console.log("onSubmitSuccess")
-
-    window.location = "/deposits"
+    this.setState({
+      createdSuccesfully: true
+    })
   }
 
   onSubmitError() {
@@ -39,6 +49,11 @@ export default class DepositForm extends React.Component {
 
   render() {
     console.log("DepositEditForm render()")
+    console.log(this.state)
+
+    if (this.state.createdSuccesfully) {
+      return <Redirect to={ { pathname: "/deposits" } }/>
+    }
 
     return <Form onSubmit={this.submitForm.bind(this)}>
               <Input
