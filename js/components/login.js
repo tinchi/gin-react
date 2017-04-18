@@ -1,21 +1,16 @@
-import {
-  Link
-} from 'react-router'
-
 import React from 'react'
+
+import {
+  Redirect,
+  Link
+} from 'react-router-dom';
 
 import {
   Form,
   Input
 } from 'formsy-react-components';
 
-import axios from 'axios';
-import qs from 'qs';
 import auth from '../auth';
-
-import {
-  Redirect
-} from 'react-router-dom';
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -38,11 +33,7 @@ export default class Login extends React.Component {
       return this.setState({
         redirectToReferrer: true
       })
-      const {
-        location
-      } = this.props
-
-    });
+    })
   }
 
   render() {
@@ -55,16 +46,15 @@ export default class Login extends React.Component {
         pathname: '/'
       }
     }
-    const {
-      redirectToReferrer
-    } = this.state
 
-    console.log(from)
-
-    if (redirectToReferrer) {
+    if (this.state.redirectToReferrer) {
       return (
         <Redirect to={from}/>
       )
+    }
+
+    if (auth.isAuthenticated) {
+      return <p>You are already logged in.</p>
     }
 
     return <Form onSubmit={this.onSubmit.bind(this)}>

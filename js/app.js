@@ -62,10 +62,11 @@ class Routes extends React.Component {
     return <Router>
     <div>
         <ul>
-          <li><Link to="/login">Login</Link></li>
-          <li><Link to="/logout">Logout</Link></li>
-
-          {/*<li><Link to="/">Home</Link></li>*/}
+          { auth.isAuthenticated ? (
+            <li><Link to="/logout">Logout</Link></li>
+          ) : (
+            <li><Link to="/login">Login</Link></li>
+          )}
           <li><Link to="/deposits">Deposits</Link></li>
           <li><Link to="/deposits/new">New Deposit</Link></li>
 
