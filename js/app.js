@@ -4,8 +4,11 @@ import ReactDOM from 'react-dom'
 import {
   BrowserRouter as Router,
   Route,
-  Link
+  Link,
+  Redirect
 } from 'react-router-dom';
+
+import auth from './auth'
 
 import DepositsList from './components/deposits_list'
 import DepositEntryEdit from './components/deposit_entry_edit'
@@ -20,6 +23,35 @@ class App extends React.Component {
         <div className="container">
         </div>
       </div>
+  }
+}
+
+class PrivateRoute extends Route {
+  render() {
+    let component = super.render();
+    let {
+      user,
+      path
+    } = this.props;
+    let match = this.state.match;
+
+    if (match) {
+      if (auth.isAuthenticated()) {
+        return component;
+      } else {
+        return <Redirect to = {
+          {
+            pathname: '/login',
+            state: {
+              from: path
+            }
+          }
+        }
+        />;
+      }
+    } else {
+      return null;
+    }
   }
 }
 
@@ -43,9 +75,9 @@ class Routes extends React.Component {
 
         <Route exact path="/login" component={Login}/>
 
-        <Route exact path="/deposits" component={DepositsList}/>
-        <Route exact path="/deposits/new" component={DepositEntryNew}/>
-        <Route exact path="/deposits/:id/edit" component={DepositEntryEdit}/>
+        <PrivateRoute exact path="/deposits" component={DepositsList} />
+        <PrivateRoute exact path="/deposits/new" component={DepositEntryNew}/>
+        <PrivateRoute exact path="/deposits/:id/edit" component={DepositEntryEdit}/>
       </div>
     </Router>
   }

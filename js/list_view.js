@@ -2,6 +2,8 @@ import React from 'react'
 
 import axios from 'axios';
 
+import auth from './auth'
+
 export default class ListView extends React.Component {
   constructor(props) {
     super(props);
@@ -20,7 +22,9 @@ export default class ListView extends React.Component {
   }
 
   pullData() {
-    axios.get(this.buildUrl())
+    axios.get(this.buildUrl(), {
+        "headers": auth.getAuthHeaders()
+      })
       .then(this.onSuccess.bind(this), )
       .catch(this.onError.bind(this));
   }
@@ -60,7 +64,9 @@ export default class ListView extends React.Component {
     })
   }
 
-  onError(response) {}
+  onError(error) {
+    console.log("onError", error.response)
+  }
 
   buildUrl() {
     return `${this.props.url}?page=${this.state.page}&${this.paramsToQuery(this.state.filterParams)}`
