@@ -49,7 +49,6 @@ export default class DepositForm extends React.Component {
 
   render() {
     console.log("DepositEditForm render()")
-    console.log(this.state)
 
     if (this.state.createdSuccesfully) {
       return <Redirect to={ { pathname: "/deposits" } }/>
