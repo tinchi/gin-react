@@ -1,13 +1,14 @@
 package main
 
 import (
-	"github.com/go-pg/pg"
+	"fmt"
 	"github.com/gin-gonic/gin"
-  "github.com/go-pg/pg/orm"
-  "github.com/tinchi/gin-react/models"
+	"github.com/go-xorm/xorm"
+	_ "github.com/lib/pq"
+	"github.com/tinchi/gin-react/models"
 )
 
-var dbConn *pg.DB
+var engine *xorm.Engine
 var router *gin.Engine
 
 func main() {
@@ -15,30 +16,19 @@ func main() {
 
 	router.Use(gin.Logger())
 
-	dbConn = pg.Connect(&pg.Options{
-		User:     "saint",
-		Database: "deposit_manager",
-	})
+	engine, _ = xorm.NewEngine("postgres", "dbname=deposit_manager sslmode=disable")
 
-	err := createSchema(dbConn)
+	fmt.Println(engine)
+
+	engine.ShowSQL(true)
+
+	err := engine.Sync2(new(models.Deposit), new(models.User))
+
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	initializeRoutes()
 
 	router.Run(":3001")
-}
-
-func createSchema(db *pg.DB) error {
-	for _, model := range []interface{}{&models.User{}, &models.Deposit{}} {
-		err := db.CreateTable(model, &orm.CreateTableOptions{
-			IfNotExists: true,
-		})
-
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }

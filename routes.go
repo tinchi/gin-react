@@ -1,21 +1,21 @@
 package main
 
 import (
+	"fmt"
+	"github.com/appleboy/gin-jwt"
+	"github.com/gin-gonic/gin"
+	"github.com/tinchi/gin-react/models"
 	"net/http"
 	"time"
-	"github.com/tinchi/gin-react/models"
-
-	"github.com/gin-gonic/gin"
-	"github.com/appleboy/gin-jwt"
 )
 
 func depositsIndexEndpoint(c *gin.Context) {
 	var deposits []models.Deposit
 
-	err := dbConn.Model(&deposits).Select()
+	err := engine.Find(&deposits)
 
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"deposits": deposits, "count": len(deposits)})
@@ -26,7 +26,7 @@ func depositsCreateEndpoint(c *gin.Context) {
 
 	if c.Bind(&deposit) == nil {
 
-		err := dbConn.Insert(&deposit)
+		_, err := engine.Insert(&deposit)
 		if err != nil {
 			panic(err)
 		}
@@ -40,9 +40,8 @@ func depositsShowEndpoint(c *gin.Context) {
 
 	id := c.Param("id")
 
-	err := dbConn.Model(&deposit).
-		Where("deposit.id = ?", id).
-		Select()
+	_, err := engine.Where("deposits.id = ?", id).
+		Get(&deposit)
 
 	if err != nil {
 		panic(err)
@@ -57,10 +56,8 @@ func depositsUpdateEndpoint(c *gin.Context) {
 	id := c.Param("id")
 
 	if c.Bind(&deposit) == nil {
-		_, err := dbConn.Model(&deposit).
-			Where("deposit.id = ?", id).
-			Returning("*").
-			Update()
+		_, err := engine.Where("deposits.id = ?", id).
+			Update(&deposit)
 
 		if err != nil {
 			panic(err)
@@ -75,9 +72,8 @@ func depositsDeleteEndpoint(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := dbConn.Model(&deposit).
-		Where("deposit.id = ?", id).
-		Delete()
+	_, err := engine.Where("deposits.id = ?", id).
+		Delete(&deposit)
 
 	if err != nil {
 		panic(err)
@@ -114,9 +110,9 @@ func initializeRoutes() {
 				"message": message,
 			})
 		},
-		TokenLookup: "header:Authorization",
+		TokenLookup:   "header:Authorization",
 		TokenHeadName: "Bearer",
-		TimeFunc: time.Now,
+		TimeFunc:      time.Now,
 	}
 
 	router.POST("/auth/login", authMiddleware.LoginHandler)
