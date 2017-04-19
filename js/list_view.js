@@ -30,8 +30,8 @@ export default class ListView extends React.Component {
     axios.get(this.buildUrl(), {
         "headers": auth.getAuthHeaders()
       })
-      .then(this.onSuccess.bind(this), )
-      .catch(this.onError.bind(this));
+      .then(this.onSuccess.bind(this))
+      // .catch(this.onError.bind(this));
   }
 
   paramsToQuery(obj) {
@@ -64,9 +64,14 @@ export default class ListView extends React.Component {
   }
 
   onSuccess(response) {
-    this.setState({
-      items: response.data[this.props.collection_name]
-    })
+    console.log("onSuccess")
+    console.log(response.data)
+
+    if (response.data.count != 0) {
+      this.setState({
+        items: response.data[this.props.collection_name]
+      })
+    }
   }
 
   onError(error) {
@@ -152,6 +157,12 @@ export default class ListView extends React.Component {
   }
 
   render() {
+    if (this.state.items.length == 0) {
+      return <Alert color="info">
+                <p>No deposits in the list</p>
+              </Alert>
+    }
+
     let rows = this.state.items.map((row) => {
       return this.renderRow(row)
     })
