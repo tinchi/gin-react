@@ -1,12 +1,14 @@
 package models
-
+import (
+"time"
+)
 type Deposit struct {
-	Id            int     `json:"id" form:"id"`
+	Id            int     `xorm:"autoincr"`
 	BankName      string  `json:"bank_name" form:"deposit[bank_name]"`
 	AccountNumber string  `json:"account_number" form:"deposit[account_number]"`
 	Ammount       int     `json:"ammount" form:"deposit[ammount]"`
-	StartDate     string  `json:"start_date" form:"deposit[start_date]"`
-	EndDate       string  `json:"end_date" form:"deposit[end_date]"`
+	StartDate     time.Time  `json:"start_date" form:"deposit[start_date]"`
+	EndDate       time.Time `json:"end_date" form:"deposit[end_date]"`
 	Interest      float32 `json:"interest" form:"deposit[interest]"`
 	Taxes         float32 `json:"taxes" form:"deposit[taxes]"`
 }

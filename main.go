@@ -16,6 +16,13 @@ func main() {
 
 	router.Use(gin.Logger())
 
+	initDB()
+	initializeRoutes()
+
+	router.Run(":3001")
+}
+
+func initDB() {
 	engine, _ = xorm.NewEngine("postgres", "dbname=deposit_manager sslmode=disable")
 
 	fmt.Println(engine)
@@ -27,8 +34,4 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	initializeRoutes()
-
-	router.Run(":3001")
 }

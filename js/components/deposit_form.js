@@ -14,6 +14,8 @@ import {
 
 import auth from '../auth'
 
+import moment from 'moment'
+
 export default class DepositForm extends React.Component {
   constructor(props) {
     super(props)
@@ -23,14 +25,20 @@ export default class DepositForm extends React.Component {
   }
   submitForm(data) {
     console.log("submitForm")
+    console.log(data)
+
+    data.ammount = parseInt(data.ammount)
+    data.interest = parseFloat(data.interest)
+    data.taxes = parseFloat(data.taxes)
+
+    data.start_date = this.toTime(data.start_date)
+    data.end_date = this.toTime(data.end_date)
 
     axios({
         method: this.props.method,
         url: this.props.url,
         headers: auth.getAuthHeaders(),
-        data: qs.stringify({
-          deposit: data
-        })
+        data: data
       })
       .then(this.onSubmitSuccess.bind(this))
       // .catch(this.onSubmitError.bind(this));
@@ -47,8 +55,16 @@ export default class DepositForm extends React.Component {
     console.log("TODO: implement onSubmitError()")
   }
 
+  toTime(date) {
+    return moment(date).format()
+  }
+
   render() {
     console.log("DepositEditForm render()")
+
+    const toDate = (time) => {
+      return moment(time).format('YYYY-MM-DD')
+    }
 
     if (this.state.createdSuccesfully) {
       return <Redirect to={ { pathname: "/deposits" } }/>
@@ -76,13 +92,13 @@ export default class DepositForm extends React.Component {
                   name="start_date"
                   label="Start Date"
                   type="date"
-                  value={this.props.data.start_date}
+                  value={toDate(this.props.data.start_date)}
                   placeholder="This is a date input."
                   required
               />
               <Input
                   name="end_date"
-                  value={this.props.data.end_date}
+                  value={toDate(this.props.data.end_date)}
                   label="End Date"
                   type="date"
                   placeholder="This is a date input."

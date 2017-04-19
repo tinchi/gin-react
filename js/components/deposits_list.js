@@ -10,10 +10,17 @@ import {
   Button
 } from 'reactstrap';
 
+import moment from 'moment'
+
 class DepositRow extends React.Component {
   delete(event) {
     event.preventDefault();
     this.props.onDelete(this.props.item.id);
+  }
+
+  formatTime(time) {
+    return moment(time).format('LL')
+
   }
 
   render() {
@@ -28,10 +35,10 @@ class DepositRow extends React.Component {
           {this.props.item.ammount}
         </td>
         <td>
-          {this.props.item.start_date}
+          {this.formatTime(this.props.item.start_date)}
         </td>
         <td>
-          {this.props.item.end_date}
+          {this.formatTime(this.props.item.end_date)}
         </td>
         <td>
           {this.props.item.interest}

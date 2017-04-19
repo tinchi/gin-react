@@ -14,6 +14,7 @@
     "bootstrap": "^4.0.0-alpha.6",
     "formsy-react": "^0.19.2",
     "formsy-react-components": "^0.10.1",
+    "moment": "^2.18.1",
     "qs": "^6.4.0",
     "react": "^15.5.4",
     "react-addons-css-transition-group": "^15.5.2",

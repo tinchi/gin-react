@@ -24,14 +24,19 @@ func depositsIndexEndpoint(c *gin.Context) {
 func depositsCreateEndpoint(c *gin.Context) {
 	var deposit models.Deposit
 
-	if c.Bind(&deposit) == nil {
+	err := c.BindJSON(&deposit)
 
+	if err == nil {
 		_, err := engine.Insert(&deposit)
 		if err != nil {
 			panic(err)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+	} else {
+		fmt.Println(err)
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 }
 
@@ -55,16 +60,22 @@ func depositsUpdateEndpoint(c *gin.Context) {
 
 	id := c.Param("id")
 
-	if c.Bind(&deposit) == nil {
-		_, err := engine.Where("deposits.id = ?", id).
+	err := c.BindJSON(&deposit)
+
+	if err == nil {
+		_, err = engine.Where("deposits.id = ?", id).
 			Update(&deposit)
 
 		if err != nil {
 			panic(err)
 		}
-	}
 
-	c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+		c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+	} else {
+		fmt.Println(err)
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
 }
 
 func depositsDeleteEndpoint(c *gin.Context) {
