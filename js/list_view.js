@@ -4,6 +4,10 @@ import axios from 'axios';
 
 import auth from './auth'
 
+import {
+  Alert
+} from 'reactstrap';
+
 export default class ListView extends React.Component {
   constructor(props) {
     super(props);
@@ -11,10 +15,11 @@ export default class ListView extends React.Component {
     this.state = {
       items: [],
       filterParams: {},
-      page: 1
-    };
+      page: 1,
+      errors: null
+    }
 
-    this.onDeleteSuccess = this.onDeleteSuccess.bind(this);
+    this.onDeleteSuccess = this.onDeleteSuccess.bind(this)
   }
 
   componentDidMount() {
@@ -66,7 +71,11 @@ export default class ListView extends React.Component {
 
   onError(error) {
     console.log("onError", error)
-    console.log("onError", error.response)
+    console.log("onError", error.response.data)
+
+    this.setState({
+      errors: error.response.data.message
+    })
   }
 
   buildUrl() {
@@ -146,6 +155,14 @@ export default class ListView extends React.Component {
     let rows = this.state.items.map((row) => {
       return this.renderRow(row)
     })
+
+    let errors = null;
+
+    if (this.state.errors != null) {
+      return <Alert color="danger">
+                <p>{this.state.errors}</p>
+              </Alert>
+    }
 
     return (
       <div>
