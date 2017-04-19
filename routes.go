@@ -4,17 +4,34 @@ import (
 	"fmt"
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
+	"github.com/tinchi/gin-react/models"
 	"golang.org/x/crypto/bcrypt"
 	// "net/http"
-	"time"
 	"net/url"
+	"regexp"
+	"time"
 )
 
-func hasPermissionThisPage(url *url.URL, userId string ) bool {
-	fmt.Println(url, userId)
-	// TODO: implement a role check
+func hasPermission(url *url.URL, userRole string) bool {
+	fmt.Println(url.Path, userRole)
 
-	return true
+	switch userRole {
+	case "admin":
+		return true
+	case "manager":
+		match, _ := regexp.MatchString("v1/users(/\\d)?", url.Path)
+
+		return match
+	case "user":
+		match, _ := regexp.MatchString("v1/deposits(/\\d)?", url.Path)
+
+		return match
+	default:
+		fmt.Println("Unknown role!")
+		return false
+	}
+
+	return false
 }
 
 func initializeRoutes(router *gin.Engine) {
@@ -52,7 +69,19 @@ func initializeRoutes(router *gin.Engine) {
 			return userId, true
 		},
 		Authorizator: func(userId string, c *gin.Context) bool {
-			return hasPermissionThisPage(c.Request.URL, userId)
+			var user models.User
+
+			fmt.Println("Authorizator")
+
+			_, err := engine.Where("users.email = ?", userId).Get(&user)
+
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+
+			c.Set("current_user", user)
+
+			return hasPermission(c.Request.URL, user.Role)
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, gin.H{
