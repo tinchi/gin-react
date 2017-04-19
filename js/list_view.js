@@ -31,7 +31,7 @@ export default class ListView extends React.Component {
         "headers": auth.getAuthHeaders()
       })
       .then(this.onSuccess.bind(this))
-      // .catch(this.onError.bind(this));
+      .catch(this.onError.bind(this));
   }
 
   paramsToQuery(obj) {
@@ -157,23 +157,21 @@ export default class ListView extends React.Component {
   }
 
   render() {
+    if (this.state.errors != null) {
+      return <Alert color="danger">
+                <p>{this.state.errors}</p>
+              </Alert>
+    }
+
     if (this.state.items.length == 0) {
       return <Alert color="info">
-                <p>No deposits in the list</p>
+                <p>No records in the list</p>
               </Alert>
     }
 
     let rows = this.state.items.map((row) => {
       return this.renderRow(row)
     })
-
-    let errors = null;
-
-    if (this.state.errors != null) {
-      return <Alert color="danger">
-                <p>{this.state.errors}</p>
-              </Alert>
-    }
 
     return (
       <div>
