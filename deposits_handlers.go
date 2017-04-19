@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/tinchi/gin-react/forms"
 	"github.com/tinchi/gin-react/models"
 	"net/http"
 )
@@ -34,21 +35,31 @@ func depositsIndexEndpoint(c *gin.Context) {
 }
 
 func depositsCreateEndpoint(c *gin.Context) {
-	var deposit models.Deposit
+	var form forms.DepositForm
 
 	current_user := getCurrentUser(c)
 
-	err := c.BindJSON(&deposit)
+	err := c.BindJSON(&form)
 
 	if err == nil {
-		deposit.UserId = current_user.Id
+		deposit := models.Deposit{
+			BankName:      form.BankName,
+			AccountNumber: form.AccountNumber,
+			Ammount:       form.Ammount,
+			StartDate:     form.StartDate,
+			EndDate:       form.EndDate,
+			Interest:      form.Interest,
+			Taxes:         form.Taxes,
+			UserId:        current_user.Id,
+		}
 
-		_, err := engine.Insert(&deposit)
+		_, err = engine.Insert(&deposit)
+
 		if err != nil {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+		c.JSON(http.StatusCreated, gin.H{"deposit": deposit})
 	} else {
 		fmt.Println(err)
 
@@ -72,13 +83,22 @@ func depositsShowEndpoint(c *gin.Context) {
 }
 
 func depositsUpdateEndpoint(c *gin.Context) {
-	var deposit models.Deposit
+	var form forms.DepositForm
 
+	// current_user := getCurrentUser(c)
 	id := c.Param("id")
-
-	err := c.BindJSON(&deposit)
+	err := c.BindJSON(&form)
 
 	if err == nil {
+		deposit := models.Deposit{
+			BankName:      form.BankName,
+			AccountNumber: form.AccountNumber,
+			Ammount:       form.Ammount,
+			StartDate:     form.StartDate,
+			EndDate:       form.EndDate,
+			Interest:      form.Interest,
+			Taxes:         form.Taxes,
+		}
 		_, err = engine.Where("deposits.id = ?", id).
 			Update(&deposit)
 
@@ -90,7 +110,7 @@ func depositsUpdateEndpoint(c *gin.Context) {
 	} else {
 		fmt.Println(err)
 
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 	}
 }
 

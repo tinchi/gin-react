@@ -16,11 +16,16 @@ import auth from '../auth'
 
 import moment from 'moment'
 
+import {
+  Alert
+} from 'reactstrap';
+
 export default class DepositForm extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      createdSuccesfully: false
+      createdSuccesfully: false,
+      errors: null
     }
   }
   submitForm(data) {
@@ -41,7 +46,7 @@ export default class DepositForm extends React.Component {
         data: data
       })
       .then(this.onSubmitSuccess.bind(this))
-      // .catch(this.onSubmitError.bind(this));
+      .catch(this.onSubmitError.bind(this));
   }
 
   onSubmitSuccess(responce) {
@@ -51,8 +56,16 @@ export default class DepositForm extends React.Component {
     })
   }
 
-  onSubmitError() {
-    console.log("TODO: implement onSubmitError()")
+  onSubmitError(error) {
+    console.log("onSubmitError")
+    console.log(error.response)
+    console.log(error.response.data.message)
+
+    if (error.response) {
+      this.setState({
+        errors: error.response.data.message
+      })
+    }
   }
 
   toTime(date) {
@@ -70,7 +83,15 @@ export default class DepositForm extends React.Component {
       return <Redirect to={ { pathname: "/deposits" } }/>
     }
 
+    let errors = null;
+    if (this.state.errors != null) {
+      errors = <Alert color="danger">
+                <p>{this.state.errors}</p>
+              </Alert>
+    }
+
     return <Form onSubmit={this.submitForm.bind(this)}>
+            { errors }
               <Input
                 name="bank_name"
                 label="Bank Name"
