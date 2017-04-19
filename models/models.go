@@ -23,8 +23,9 @@ func (c *Deposit) TableName() string {
 type User struct {
 	Id       int       `json:"id" xorm:"autoincr"`
 	Name     string    `json:"name" form:"user[name]"`
-	Email    string    `json:"email" form:"user[email]"`
+	Email    string    `json:"email" form:"user[email]" xorm:"unique"`
 	Password string    `json:"-" form:"user[password]"`
+	Role     string    `json:"role" form:"user[role]"`
 	Deposits []Deposit `json:"-"`
 }
 

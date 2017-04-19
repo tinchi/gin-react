@@ -57,13 +57,24 @@ func registerEndpoint(c *gin.Context) {
 	if err == nil {
 		bytePassword := []byte(signupForm.Password)
 		hashedPassword, err := bcrypt.GenerateFromPassword(bytePassword, bcrypt.DefaultCost)
+
 		if err != nil {
 			panic(err)
 		}
 
-		_, err = engine.Insert(&models.User{Name: signupForm.Name, Email: signupForm.Email, Password: string(hashedPassword)})
+		_, err = engine.Insert(&models.User{
+			Name:     signupForm.Name,
+			Email:    signupForm.Email,
+			Password: string(hashedPassword),
+			Role:     "user", // default role for registered users
+		})
+
 		if err != nil {
-			panic(err)
+			// c.JSON(406, gin.H{"message": err.Error()})
+			// TODO: reimplement
+			c.JSON(406, gin.H{"message": "An email already taken."})
+			c.Abort()
+			return
 		}
 
 		c.JSON(http.StatusCreated, "")
