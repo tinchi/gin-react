@@ -13,7 +13,7 @@ type Deposit struct {
 	EndDate       time.Time `json:"end_date" form:"deposit[end_date]"`
 	Interest      float32   `json:"interest" form:"deposit[interest]"`
 	Taxes         float32   `json:"taxes" form:"deposit[taxes]"`
-	UserID    int64    `db:"user_id" json:"user_id"`
+	UserID        int64     `db:"user_id" json:"user_id"`
 }
 
 func (c *Deposit) TableName() string {
