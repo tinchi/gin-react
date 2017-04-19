@@ -14,7 +14,7 @@ export default class Logout extends React.Component {
 
     return <Redirect to = {
       {
-        pathname: '/'
+        pathname: '/deposits'
       }
     }
     />

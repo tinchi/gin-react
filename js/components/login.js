@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 
 import {
   Redirect,
@@ -12,12 +13,16 @@ import {
 
 import auth from '../auth';
 
+import {
+  Alert
+} from 'reactstrap';
+
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      errors: false,
+      errors: null,
       redirectToReferrer: false
     }
   }
@@ -33,6 +38,14 @@ export default class Login extends React.Component {
       return this.setState({
         redirectToReferrer: true
       })
+    }, (error) => {
+      console.log(error)
+      console.log(error.response.data.message)
+
+      return this.setState({
+        errors: error.response.data.message
+      })
+
     })
   }
 
@@ -43,7 +56,7 @@ export default class Login extends React.Component {
       from
     } = this.props.location.state || {
       from: {
-        pathname: '/'
+        pathname: '/deposits'
       }
     }
 
@@ -57,7 +70,15 @@ export default class Login extends React.Component {
       return <p>You are already logged in.</p>
     }
 
+    let errors = null;
+    if (this.state.errors != null) {
+      errors = <Alert color="danger">
+                <p>{this.state.errors}</p>
+              </Alert>
+    }
+
     return <Form onSubmit={this.onSubmit.bind(this)}>
+              { errors }
               <Input
                 name="username"
                 label="Email"

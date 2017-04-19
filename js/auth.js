@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 module.exports = {
-  login(email, password, callback) {
+  login(email, password, callback, onError) {
     axios.post('/auth/login', {
         'username': email,
         'password': password
@@ -13,8 +13,7 @@ module.exports = {
         }
 
         callback(true)
-      })
-      // .catch(this.onLoginError.bind(this))
+      }).catch(onError.bind(this))
   },
 
   getToken() {
@@ -43,6 +42,7 @@ module.exports = {
   },
 
   isAuthenticated() {
+    console.log('isAuthenticated', !!localStorage.token)
     return !!localStorage.token
   },
 
