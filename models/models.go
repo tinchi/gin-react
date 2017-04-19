@@ -14,6 +14,7 @@ type Deposit struct {
 	Interest      float32   `json:"interest" form:"deposit[interest]"`
 	Taxes         float32   `json:"taxes" form:"deposit[taxes]"`
 	UserId        int       `xorm:"'user_id'" json:"user_id"`
+	CreatedAt     time.Time `xorm:"created" json:"created_at" `
 }
 
 func (c *Deposit) TableName() string {
@@ -21,12 +22,13 @@ func (c *Deposit) TableName() string {
 }
 
 type User struct {
-	Id       int       `json:"id" xorm:"autoincr"`
-	Name     string    `json:"name" form:"user[name]"`
-	Email    string    `json:"email" form:"user[email]" xorm:"unique"`
-	Password string    `json:"-" form:"user[password]"`
-	Role     string    `json:"role" form:"user[role]"`
-	Deposits []Deposit `json:"-"`
+	Id        int       `json:"id" xorm:"autoincr"`
+	Name      string    `json:"name" form:"user[name]"`
+	Email     string    `json:"email" form:"user[email]" xorm:"unique"`
+	Password  string    `json:"-" form:"user[password]"`
+	Role      string    `json:"role" form:"user[role]"`
+	Deposits  []Deposit `json:"-"`
+	CreatedAt time.Time `xorm:"created" json:"created_at"`
 }
 
 func (c *User) TableName() string {
