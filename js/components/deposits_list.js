@@ -58,9 +58,9 @@ class DepositRow extends React.Component {
   }
 }
 
-export default class DepositsList extends React.Component {
+export default class DepositList extends React.Component {
   render() {
-    console.log('DepositsList');
+    console.log('DepositList');
 
     return <ListView
               title='Deposit List'

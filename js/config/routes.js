@@ -9,7 +9,7 @@ import {
 
 import auth from '../auth'
 
-import DepositsList from '../components/deposits_list'
+import DepositList from '../components/deposit_list'
 import DepositEntryEdit from '../components/deposit_entry_edit'
 import DepositEntryNew from '../components/deposit_entry_new'
 
@@ -74,7 +74,7 @@ export default class Routes extends React.Component {
         <Route exact path="/logout" component={Logout}/>
         <Route exact path="/register" component={Register}/>
 
-        <PrivateRoute exact path="/deposits" component={DepositsList} />
+        <PrivateRoute exact path="/deposits" component={DepositList} />
         <PrivateRoute exact path="/deposits/new" component={DepositEntryNew}/>
         <PrivateRoute exact path="/deposits/:id/edit" component={DepositEntryEdit}/>
       </div>
