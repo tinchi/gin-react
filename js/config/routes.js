@@ -15,6 +15,7 @@ import DepositEntryNew from '../components/deposit_entry_new'
 
 import Login from '../components/login'
 import Logout from '../components/logout'
+import Register from '../components/register'
 
 class PrivateRoute extends Route {
   render() {
@@ -51,8 +52,9 @@ export default class Routes extends React.Component {
 
     return <Router>
     <div>
+      <div id="error"/>
         <ul>
-          { auth.isAuthenticated ? (
+          { auth.isAuthenticated() ? (
             <div>
               <li><Link to="/logout">Logout</Link></li>
               <li><Link to="/deposits">Deposits</Link></li>
@@ -60,13 +62,17 @@ export default class Routes extends React.Component {
             <li><Link to="/">Revenue Report</Link></li>
             </div>
           ) : (
-            <li><Link to="/login">Login</Link></li>
+            <div>
+              <li><Link to="/login">Login</Link></li>
+              <li><Link to="/register">Register</Link></li>
+            </div>
           )}
         </ul>
         <hr/>
 
         <Route exact path="/login" component={Login}/>
         <Route exact path="/logout" component={Logout}/>
+        <Route exact path="/register" component={Register}/>
 
         <PrivateRoute exact path="/deposits" component={DepositsList} />
         <PrivateRoute exact path="/deposits/new" component={DepositEntryNew}/>

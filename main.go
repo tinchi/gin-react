@@ -9,15 +9,15 @@ import (
 )
 
 var engine *xorm.Engine
-var router *gin.Engine
 
 func main() {
-	router = gin.Default()
+	router := gin.Default()
 
 	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
 
 	initDB()
-	initializeRoutes()
+	initializeRoutes(router)
 
 	router.Run(":3001")
 }

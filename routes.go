@@ -4,96 +4,12 @@ import (
 	"fmt"
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
-	"github.com/tinchi/gin-react/models"
-	"net/http"
+	"golang.org/x/crypto/bcrypt"
+	// "net/http"
 	"time"
 )
 
-func depositsIndexEndpoint(c *gin.Context) {
-	var deposits []models.Deposit
-
-	err := engine.Find(&deposits)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	c.JSON(http.StatusOK, gin.H{"deposits": deposits, "count": len(deposits)})
-}
-
-func depositsCreateEndpoint(c *gin.Context) {
-	var deposit models.Deposit
-
-	err := c.BindJSON(&deposit)
-
-	if err == nil {
-		_, err := engine.Insert(&deposit)
-		if err != nil {
-			panic(err)
-		}
-
-		c.JSON(http.StatusOK, gin.H{"deposit": deposit})
-	} else {
-		fmt.Println(err)
-
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	}
-}
-
-func depositsShowEndpoint(c *gin.Context) {
-	var deposit models.Deposit
-
-	id := c.Param("id")
-
-	_, err := engine.Where("deposits.id = ?", id).
-		Get(&deposit)
-
-	if err != nil {
-		panic(err)
-	}
-
-	c.JSON(http.StatusOK, gin.H{"deposit": deposit})
-}
-
-func depositsUpdateEndpoint(c *gin.Context) {
-	var deposit models.Deposit
-
-	id := c.Param("id")
-
-	err := c.BindJSON(&deposit)
-
-	if err == nil {
-		_, err = engine.Where("deposits.id = ?", id).
-			Update(&deposit)
-
-		if err != nil {
-			panic(err)
-		}
-
-		c.JSON(http.StatusOK, gin.H{"deposit": deposit})
-	} else {
-		fmt.Println(err)
-
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	}
-}
-
-func depositsDeleteEndpoint(c *gin.Context) {
-	var deposit models.Deposit
-
-	id := c.Param("id")
-
-	_, err := engine.Where("deposits.id = ?", id).
-		Delete(&deposit)
-
-	if err != nil {
-		panic(err)
-	}
-
-	c.JSON(http.StatusOK, gin.H{})
-}
-
-func initializeRoutes() {
+func initializeRoutes(router *gin.Engine) {
 	router.Static("/assets", "./assets")
 
 	authMiddleware := &jwt.GinJWTMiddleware{
@@ -102,13 +18,33 @@ func initializeRoutes() {
 		Timeout:    time.Hour,
 		MaxRefresh: time.Hour,
 		Authenticator: func(userId string, password string, c *gin.Context) (string, bool) {
-			if (userId == "admin" && password == "admin") || (userId == "test" && password == "test") {
+			fmt.Println("Authenticator:", userId, password)
+
+			var hashFromDatabase string
+			_, err := engine.Where("user.email = ?", userId).Get(&hashFromDatabase)
+
+			if err != nil {
+				fmt.Println(err)
+				fmt.Println(err.Error())
+
+				return userId, false
+			}
+
+			fmt.Println("hashFromDatabase:", hashFromDatabase)
+
+			// Comparing the password with the hash
+			if err = bcrypt.CompareHashAndPassword([]byte(hashFromDatabase), []byte(password)); err != nil {
+				// TODO: Properly handle error
+				fmt.Println("Password was correct!")
+
 				return userId, true
 			}
 
 			return userId, false
+
 		},
 		Authorizator: func(userId string, c *gin.Context) bool {
+			fmt.Println(c)
 			if userId == "admin" {
 				return true
 			}
@@ -127,6 +63,7 @@ func initializeRoutes() {
 	}
 
 	router.POST("/auth/login", authMiddleware.LoginHandler)
+	router.POST("/auth/register", registerEndpoint)
 
 	v1 := router.Group("/v1")
 	v1.Use(authMiddleware.MiddlewareFunc())
@@ -137,6 +74,9 @@ func initializeRoutes() {
 		v1.GET("/deposits/:id", depositsShowEndpoint)
 		v1.PUT("/deposits/:id", depositsUpdateEndpoint)
 		v1.DELETE("/deposits/:id", depositsDeleteEndpoint)
+
+		v1.GET("/users", usersIndexEndpoint)
+		v1.POST("/users", usersCreateEndpoint)
 	}
 
 	router.NoRoute(func(c *gin.Context) {
