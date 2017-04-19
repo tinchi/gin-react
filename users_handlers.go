@@ -55,8 +55,17 @@ func registerEndpoint(c *gin.Context) {
 	err := c.BindJSON(&signupForm)
 
 	if err == nil {
-		// c.JSON(406, gin.H{"message": "Invalid form", "form": signupForm})
-		// c.Abort()
+		bytePassword := []byte(signupForm.Password)
+		hashedPassword, err := bcrypt.GenerateFromPassword(bytePassword, bcrypt.DefaultCost)
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = engine.Insert(&models.User{Name: signupForm.Name, Email: signupForm.Email, Password: string(hashedPassword)})
+		if err != nil {
+			panic(err)
+		}
+
 		c.JSON(http.StatusCreated, "")
 	} else {
 		fmt.Println(err)

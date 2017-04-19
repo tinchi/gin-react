@@ -7,7 +7,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	// "net/http"
 	"time"
+	"net/url"
 )
+
+func hasPermissionThisPage(url *url.URL, userId string ) bool {
+	fmt.Println(url, userId)
+	// TODO: implement a role check
+
+	return true
+}
 
 func initializeRoutes(router *gin.Engine) {
 	router.Static("/assets", "./assets")
@@ -21,7 +29,7 @@ func initializeRoutes(router *gin.Engine) {
 			fmt.Println("Authenticator:", userId, password)
 
 			var hashFromDatabase string
-			_, err := engine.Where("user.email = ?", userId).Get(&hashFromDatabase)
+			_, err := engine.Table("users").Where("email = ?", userId).Cols("password").Get(&hashFromDatabase)
 
 			if err != nil {
 				fmt.Println(err)
@@ -30,26 +38,21 @@ func initializeRoutes(router *gin.Engine) {
 				return userId, false
 			}
 
-			fmt.Println("hashFromDatabase:", hashFromDatabase)
+			err = bcrypt.CompareHashAndPassword([]byte(hashFromDatabase), []byte(password))
 
-			// Comparing the password with the hash
-			if err = bcrypt.CompareHashAndPassword([]byte(hashFromDatabase), []byte(password)); err != nil {
-				// TODO: Properly handle error
-				fmt.Println("Password was correct!")
+			if err != nil {
+				fmt.Println("Wrong password!")
+				fmt.Println(err)
 
-				return userId, true
+				return userId, false
 			}
 
-			return userId, false
+			fmt.Println("Password was correct!")
 
+			return userId, true
 		},
 		Authorizator: func(userId string, c *gin.Context) bool {
-			fmt.Println(c)
-			if userId == "admin" {
-				return true
-			}
-
-			return false
+			return hasPermissionThisPage(c.Request.URL, userId)
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, gin.H{
