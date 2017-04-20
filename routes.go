@@ -103,11 +103,13 @@ func initializeRoutes(router *gin.Engine) {
 	v1.Use(authMiddleware.MiddlewareFunc())
 
 	{
-		v1.GET("/deposits", depositsIndexEndpoint)
-		v1.POST("/deposits", depositsCreateEndpoint)
-		v1.GET("/deposits/:id", depositsShowEndpoint)
-		v1.PUT("/deposits/:id", depositsUpdateEndpoint)
-		v1.DELETE("/deposits/:id", depositsDeleteEndpoint)
+		deposit := new(controllers.DepositController)
+
+		v1.GET("/deposits", deposit.IndexEndpoint)
+		v1.POST("/deposits", deposit.CreateEndpoint)
+		v1.GET("/deposits/:id", deposit.ShowEndpoint)
+		v1.PUT("/deposits/:id", deposit.UpdateEndpoint)
+		v1.DELETE("/deposits/:id", deposit.DeleteEndpoint)
 
 		user := new(controllers.UserController)
 
