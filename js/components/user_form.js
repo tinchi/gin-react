@@ -30,13 +30,6 @@ export default class DepositForm extends React.Component {
     console.log("submitForm")
     console.log(data)
 
-    // data.ammount = parseInt(data.ammount)
-    // data.interest = parseFloat(data.interest)
-    // data.taxes = parseFloat(data.taxes)
-
-    // data.start_date = this.toTime(data.start_date)
-    // data.end_date = this.toTime(data.end_date)
-
     axios({
         method: this.props.method,
         url: this.props.url,

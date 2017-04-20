@@ -118,9 +118,9 @@ func initializeRoutes(router *gin.Engine) {
 
 		v1.GET("/users", user.IndexEndpoint)
 		v1.POST("/users", user.CreateEndpoint)
-		// v1.GET("/users/:id", user.ShowEndpoint)
-		// v1.PUT("/users/:id", user.UpdateEndpoint)
-		// v1.DELETE("/users/:id", user.DeleteEndpoint)
+		v1.GET("/users/:id", user.ShowEndpoint)
+		v1.PUT("/users/:id", user.UpdateEndpoint)
+		v1.DELETE("/users/:id", user.DeleteEndpoint)
 	}
 
 	router.NoRoute(func(c *gin.Context) {

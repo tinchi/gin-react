@@ -59,3 +59,61 @@ func (ctrl UserController) CreateEndpoint(c *gin.Context) {
     c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
   }
 }
+
+
+func (ctrl UserController) ShowEndpoint(c *gin.Context) {
+  var user models.User
+
+  id := c.Param("id")
+
+  _, err := db.Engine.Where("id = ?", id).
+    Get(&user)
+
+  if err != nil {
+    panic(err)
+  }
+
+  c.JSON(http.StatusOK, gin.H{"user": user})
+}
+
+func (ctrl UserController) UpdateEndpoint(c *gin.Context) {
+  var form forms.UserFormNoPass
+
+  id := c.Param("id")
+  err := c.BindJSON(&form)
+
+  if err == nil {
+    user := models.User{
+      Name:     form.Name,
+      Email:    form.Email,
+      Role:     form.Role,
+    }
+    _, err = db.Engine.Where("users.id = ?", id).
+      Update(&user)
+
+    if err != nil {
+      panic(err)
+    }
+
+    c.JSON(http.StatusOK, gin.H{"user": user})
+  } else {
+    fmt.Println(err)
+
+    c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+  }
+}
+
+func (ctrl UserController) DeleteEndpoint(c *gin.Context) {
+  var user models.User
+
+  id := c.Param("id")
+
+  _, err := db.Engine.Where("users.id = ?", id).
+    Delete(&user)
+
+  if err != nil {
+    panic(err)
+  }
+
+  c.JSON(http.StatusOK, gin.H{})
+}

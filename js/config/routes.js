@@ -15,6 +15,7 @@ import DepositEntryNew from '../components/deposit_entry_new'
 
 import UserList from '../components/user_list'
 import UserEntryNew from '../components/user_entry_new'
+import UserEdit from '../components/user_edit'
 
 import Login from '../components/login'
 import Logout from '../components/logout'
@@ -83,6 +84,7 @@ export default class Routes extends React.Component {
 
         <PrivateRoute exact path="/users" component={UserList} />
         <PrivateRoute exact path="/users/new" component={UserEntryNew} />
+        <PrivateRoute exact path="/users/:id/edit" component={UserEdit} />
       </div>
     </Router>
   }
