@@ -60,8 +60,8 @@ export default class Routes extends React.Component {
             <div>
               <li><Link to="/logout">Logout</Link></li>
               <li><Link to="/deposits">Deposits</Link></li>
-              <li><Link to="/deposits/new">New Deposit</Link></li>
-            <li><Link to="/">Revenue Report</Link></li>
+              <li><Link to="/users">Users</Link></li>
+              <li><Link to="/revenue_report">Revenue Report</Link></li>
             </div>
           ) : (
             <div>

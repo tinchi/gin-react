@@ -45,7 +45,7 @@ export default class UserList extends React.Component {
     console.log('UserList');
 
     return <ListView
-              title='User List'
+              title='Users'
               url='v1/users'
               collection_name='users'
               columns={["Id", 'Name', 'Email', 'Role', ""]}

@@ -63,7 +63,7 @@ export default class DepositList extends React.Component {
     console.log('DepositList');
 
     return <ListView
-              title='Deposit List'
+              title='Deposits'
               url='v1/deposits'
               collection_name='deposits'
               columns={["Id", 'Bank Name', 'Account Number', 'Ammount', 'Start Date', 'End Date', 'Interest', 'Taxes', ""]}

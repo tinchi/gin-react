@@ -5,8 +5,13 @@ import axios from 'axios';
 import auth from './auth'
 
 import {
-  Alert
+  Alert,
+  Button
 } from 'reactstrap';
+
+import {
+  Link
+} from 'react-router-dom'
 
 export default class ListView extends React.Component {
   constructor(props) {
@@ -163,27 +168,31 @@ export default class ListView extends React.Component {
               </Alert>
     }
 
+    let body = null
+
     if (this.state.items.length == 0) {
-      return <Alert color="info">
+      body = <Alert color="info">
                 <p>No records in the list</p>
               </Alert>
-    }
-
-    let rows = this.state.items.map((row) => {
-      return this.renderRow(row)
-    })
-
-    return (
-      <div>
-        <h1>{this.props.title}</h1>
-
-        <table className="table time-table">
+    } else {
+      let rows = this.state.items.map((row) => {
+        return this.renderRow(row)
+      })
+      body = <table className="table time-table">
           { this.renderHeader(this.props.columns) }
           <tbody>
             { rows }
             { this.renderPaging() }
           </tbody>
         </table>
+    }
+
+    return (
+      <div>
+        <h1>{this.props.title}<Link to={`${this.props.collection_name}/new`}>+</Link></h1>
+
+        { body }
+
       </div>
     );
   }
