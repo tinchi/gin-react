@@ -5,6 +5,8 @@ import (
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/tinchi/gin-react/models"
+	"github.com/tinchi/gin-react/controllers"
+	"github.com/tinchi/gin-react/db"
 	"golang.org/x/crypto/bcrypt"
 	// "net/http"
 	"net/url"
@@ -46,7 +48,7 @@ func initializeRoutes(router *gin.Engine) {
 			fmt.Println("Authenticator:", userId, password)
 
 			var hashFromDatabase string
-			_, err := engine.Table("users").Where("email = ?", userId).Cols("password").Get(&hashFromDatabase)
+			_, err := db.Engine.Table("users").Where("email = ?", userId).Cols("password").Get(&hashFromDatabase)
 
 			if err != nil {
 				fmt.Println(err)
@@ -73,7 +75,7 @@ func initializeRoutes(router *gin.Engine) {
 
 			fmt.Println("Authorizator")
 
-			_, err := engine.Where("users.email = ?", userId).Get(&user)
+			_, err := db.Engine.Where("users.email = ?", userId).Get(&user)
 
 			if err != nil {
 				fmt.Println(err.Error())
@@ -107,8 +109,13 @@ func initializeRoutes(router *gin.Engine) {
 		v1.PUT("/deposits/:id", depositsUpdateEndpoint)
 		v1.DELETE("/deposits/:id", depositsDeleteEndpoint)
 
-		v1.GET("/users", usersIndexEndpoint)
-		v1.POST("/users", usersCreateEndpoint)
+		user := new(controllers.UserController)
+
+		v1.GET("/users", user.IndexEndpoint)
+		v1.POST("/users", user.CreateEndpoint)
+		// v1.GET("/users/:id", user.ShowEndpoint)
+		// v1.PUT("/users/:id", user.UpdateEndpoint)
+		// v1.DELETE("/users/:id", user.DeleteEndpoint)
 	}
 
 	router.NoRoute(func(c *gin.Context) {

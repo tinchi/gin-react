@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tinchi/gin-react/forms"
 	"github.com/tinchi/gin-react/models"
+	"github.com/tinchi/gin-react/db"
 	"net/http"
 )
 
@@ -21,7 +22,7 @@ func depositsIndexEndpoint(c *gin.Context) {
 
 	current_user := getCurrentUser(c)
 
-	err := engine.Where("user_id = ?", current_user.Id).Find(&deposits)
+	err := db.Engine.Where("user_id = ?", current_user.Id).Find(&deposits)
 
 	if err != nil {
 		fmt.Println(err)
@@ -53,7 +54,7 @@ func depositsCreateEndpoint(c *gin.Context) {
 			UserId:        current_user.Id,
 		}
 
-		_, err = engine.Insert(&deposit)
+		_, err = db.Engine.Insert(&deposit)
 
 		if err != nil {
 			panic(err)
@@ -72,7 +73,7 @@ func depositsShowEndpoint(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := engine.Where("deposits.id = ?", id).
+	_, err := db.Engine.Where("deposits.id = ?", id).
 		Get(&deposit)
 
 	if err != nil {
@@ -99,7 +100,7 @@ func depositsUpdateEndpoint(c *gin.Context) {
 			Interest:      form.Interest,
 			Taxes:         form.Taxes,
 		}
-		_, err = engine.Where("deposits.id = ?", id).
+		_, err = db.Engine.Where("deposits.id = ?", id).
 			Update(&deposit)
 
 		if err != nil {
@@ -119,7 +120,7 @@ func depositsDeleteEndpoint(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := engine.Where("deposits.id = ?", id).
+	_, err := db.Engine.Where("deposits.id = ?", id).
 		Delete(&deposit)
 
 	if err != nil {
