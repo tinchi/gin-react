@@ -5,6 +5,7 @@ import (
   "github.com/gin-gonic/gin"
   "github.com/tinchi/gin-react/db"
   "github.com/tinchi/gin-react/models"
+  "github.com/tinchi/gin-react/forms"
   "golang.org/x/crypto/bcrypt"
   "net/http"
 )
@@ -24,27 +25,34 @@ func (ctrl UserController) IndexEndpoint(c *gin.Context) {
 }
 
 func (ctrl UserController) CreateEndpoint(c *gin.Context) {
-  var user models.User
+  var form forms.UserForm
 
-  err := c.BindJSON(&user)
+  err := c.BindJSON(&form)
 
   if err == nil {
-    userPassword1 := user.Password
+    bytePassword := []byte(form.Password)
+    hashedPassword, err := bcrypt.GenerateFromPassword(bytePassword, bcrypt.DefaultCost)
 
-    // Generate "hash" to store from user password
-    hash, err := bcrypt.GenerateFromPassword([]byte(userPassword1), bcrypt.DefaultCost)
-    if err != nil {
-      // TODO: Properly handle error
-      fmt.Println(err)
-    }
-    user.Password = string(hash)
-
-    _, err = db.Engine.Insert(&user)
     if err != nil {
       panic(err)
     }
 
-    c.JSON(http.StatusCreated, "")
+    user := models.User{
+      Name:     form.Name,
+      Email:    form.Email,
+      Password: string(hashedPassword),
+      Role:     form.Role,
+    }
+
+    _, err = db.Engine.Insert(&user)
+    if err != nil {
+      fmt.Println(err)
+      c.JSON(http.StatusBadRequest, gin.H{"message": "An email already taken."})
+      c.Abort()
+      return
+    }
+
+    c.JSON(http.StatusCreated, gin.H{"user": user})
   } else {
     fmt.Println(err)
 
