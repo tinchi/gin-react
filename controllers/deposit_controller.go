@@ -69,6 +69,7 @@ func (ctrl DepositController) CreateEndpoint(c *gin.Context) {
     c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
   }
 }
+
 func (ctrl DepositController) ShowEndpoint(c *gin.Context) {
   var deposit models.Deposit
 

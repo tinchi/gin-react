@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
-	"github.com/tinchi/gin-react/models"
 	"github.com/tinchi/gin-react/controllers"
 	"github.com/tinchi/gin-react/db"
+	"github.com/tinchi/gin-react/models"
 	"golang.org/x/crypto/bcrypt"
 	// "net/http"
 	"net/url"
@@ -96,8 +96,11 @@ func initializeRoutes(router *gin.Engine) {
 		TimeFunc:      time.Now,
 	}
 
+	auth := new(controllers.AuthController)
+
 	router.POST("/auth/login", authMiddleware.LoginHandler)
-	router.POST("/auth/register", registerEndpoint)
+	// router.POST("/auth/login", auth.LoginEndpoint)
+	router.POST("/auth/register", auth.RegisterEndpoint)
 
 	v1 := router.Group("/v1")
 	v1.Use(authMiddleware.MiddlewareFunc())
