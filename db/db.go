@@ -23,6 +23,10 @@ func Init() {
     fmt.Println(err)
   }
 
+  userSeeds()
+}
+
+func userSeeds() {
   bytePassword := []byte("qweqwe")
   hashedPassword, err := bcrypt.GenerateFromPassword(bytePassword, bcrypt.DefaultCost)
 
@@ -31,4 +35,8 @@ func Init() {
     &models.User{Name: "manager", Email: "manager@manager.com", Password: string(hashedPassword), Role: "manager"},
     &models.User{Name: "user", Email: "user@user.com", Password: string(hashedPassword), Role: "user"},
   )
+
+  if err != nil {
+    fmt.Println(err)
+  }
 }
