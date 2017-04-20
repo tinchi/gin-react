@@ -43,5 +43,5 @@ func initDB() {
 		&models.User{Name: "admin", Email: "admin@admin.com", Password: string(hashedPassword), Role: "admin"},
 		&models.User{Name: "manager", Email: "manager@manager.com", Password: string(hashedPassword), Role: "manager"},
 		&models.User{Name: "user", Email: "user@user.com", Password: string(hashedPassword), Role: "user"},
-		)
+	)
 }
