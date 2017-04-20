@@ -6,6 +6,7 @@ import (
 	"github.com/go-xorm/xorm"
 	_ "github.com/lib/pq"
 	"github.com/tinchi/gin-react/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var engine *xorm.Engine
@@ -34,4 +35,13 @@ func initDB() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	bytePassword := []byte("qweqwe")
+	hashedPassword, err := bcrypt.GenerateFromPassword(bytePassword, bcrypt.DefaultCost)
+
+	_, err = engine.Insert(
+		&models.User{Name: "admin", Email: "admin@admin.com", Password: string(hashedPassword), Role: "admin"},
+		&models.User{Name: "manager", Email: "manager@manager.com", Password: string(hashedPassword), Role: "manager"},
+		&models.User{Name: "user", Email: "user@user.com", Password: string(hashedPassword), Role: "user"},
+		)
 }
