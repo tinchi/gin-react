@@ -21,12 +21,12 @@ func getCurrentUser(c *gin.Context) models.User {
 
 // * User can filter saving deposits by amount (minimum and maximum), bank name and date.
 type DepositFilter struct {
-	BankName   string `json:"bank_name" form:"bank_name"`
-	AmountMin  int    `json:"amount_from" form:"amount_from"`
-	AmountMax  int    `json:"amount_to" form:"amount_to"`
-	From       string `json:"from" form:"from"`
-	To         string `json:"to" form:"to"`
-	Page       int    `json:"page" form:"page"`
+	BankName  string `json:"bank_name" form:"bank_name"`
+	AmountMin int    `json:"amount_from" form:"amount_from"`
+	AmountMax int    `json:"amount_to" form:"amount_to"`
+	From      string `json:"from" form:"from"`
+	To        string `json:"to" form:"to"`
+	Page      int    `json:"page" form:"page"`
 }
 
 func (ctrl DepositController) IndexEndpoint(c *gin.Context) {

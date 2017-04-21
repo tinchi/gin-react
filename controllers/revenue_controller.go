@@ -1,11 +1,11 @@
 package controllers
 
 import (
-  "fmt"
-  "github.com/gin-gonic/gin"
-  "github.com/tinchi/gin-react/db"
-  "net/http"
-  "time"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/tinchi/gin-react/db"
+	"net/http"
+	"time"
 )
 
 const RevenueSql = `SELECT
@@ -35,47 +35,43 @@ const dateLayout = "2006-01-02"
 type RevenueController struct{}
 
 type RevenueForm struct {
-  FromDate     time.Time `json:"from_date" binding:"required"`
-  ToDate       time.Time `json:"to_date" binding:"required"`
+	FromDate time.Time `json:"from_date" binding:"required"`
+	ToDate   time.Time `json:"to_date" binding:"required"`
 }
 
 type Revenue struct {
-  Id            int       `json:"id"`
-  BankName      string    `json:"bank_name"`
-  AccountNumber string    `json:"account_number"`
-  Amount        int       `json:"amount"`
-  RevenueDays   int       `json:"revenue_days"`
-  Interest      float32   `json:"interest"`
-  Taxes         float32   `json:"taxes"`
-  RevenueAmount float32   `json:"revenue_amount"`
+	Id            int     `json:"id"`
+	BankName      string  `json:"bank_name"`
+	AccountNumber string  `json:"account_number"`
+	Amount        int     `json:"amount"`
+	RevenueDays   int     `json:"revenue_days"`
+	Interest      float32 `json:"interest"`
+	Taxes         float32 `json:"taxes"`
+	RevenueAmount float32 `json:"revenue_amount"`
 }
 
 func (ctrl RevenueController) ReportEndpoint(c *gin.Context) {
-  var revenues []Revenue
-  var form RevenueForm
+	var revenues []Revenue
+	var form RevenueForm
 
-  err := c.BindJSON(&form)
+	err := c.BindJSON(&form)
 
-  if err == nil {
-    fFromDate := form.FromDate.Format(dateLayout)
-    fToDate := form.ToDate.Format(dateLayout)
+	if err == nil {
+		fFromDate := form.FromDate.Format(dateLayout)
+		fToDate := form.ToDate.Format(dateLayout)
 
-    sqlQuery := fmt.Sprintf(RevenueSql, fToDate, fFromDate, fFromDate, fToDate)
+		sqlQuery := fmt.Sprintf(RevenueSql, fToDate, fFromDate, fFromDate, fToDate)
 
-    fmt.Println(sqlQuery)
+		fmt.Println(sqlQuery)
 
-    err = db.Engine.SQL(sqlQuery).Find(&revenues)
+		err = db.Engine.SQL(sqlQuery).Find(&revenues)
 
-    fmt.Println(err)
+		fmt.Println(err)
 
-    c.JSON(http.StatusOK, gin.H{"revenues": revenues})
-  } else {
-    fmt.Println(err)
+		c.JSON(http.StatusOK, gin.H{"revenues": revenues})
+	} else {
+		fmt.Println(err)
 
-    c.JSON(http.StatusBadRequest, gin.H{"message": "Wrong parameters"})
-  }
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Wrong parameters"})
+	}
 }
-
-
-
-
