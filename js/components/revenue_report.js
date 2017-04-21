@@ -1,0 +1,128 @@
+import React from 'react'
+
+import ListView from '../list_view'
+
+import {
+  Link
+} from 'react-router-dom'
+
+import {
+  Form,
+  Input
+} from 'formsy-react-components';
+
+import axios from 'axios';
+
+import auth from '../auth';
+
+import moment from 'moment'
+
+class RevenueRow extends React.Component {
+  render() {
+    return <tr key={this.props.item.id} className="list-row">
+        <td>
+          {this.props.item.bank_name}
+        </td>
+        <td>
+          {this.props.item.account_number}
+        </td>
+        <td>
+          {this.props.item.amount}
+        </td>
+        <td>
+          {this.props.item.revenue_days}
+        </td>
+        <td>
+          {this.props.item.revenue_amount}
+        </td>
+      </tr>
+  }
+}
+
+// * User can generate a revenue report for a given period, showing the gains and losses from interest and taxes for each deposit. 
+// The amount should be green or red if respectively it represents a gain or loss.
+//  The report should show the sum of profits and losses at the bottom for that period.
+
+export default class RevenueReport extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      items: []
+    }
+  }
+  onSubmit(data) {
+    console.log("onSubmit")
+    console.log({
+      from_date: moment(data.from).format(),
+      to_date: moment(data.from).format()
+    })
+
+    axios({
+        method: "post",
+        url: "/v1/revenue/report",
+        headers: auth.getAuthHeaders(),
+        data: {
+          from_date: moment(data.from).format(),
+          to_date: moment(data.to).format()
+        }
+      })
+      .then(this.onSubmitSuccess.bind(this))
+      .catch(this.onSubmitError.bind(this));
+  }
+
+  onSubmitSuccess(responce) {
+    console.log("onSubmitSuccess")
+    console.log(responce)
+    console.log(responce.data.revenues)
+
+    this.setState({
+      items: responce.data.revenues
+    })
+  }
+
+  onSubmitError(error) {
+    console.log("onSubmitError")
+    console.log(error.response)
+    console.log(error.response.data)
+
+    if (error.response) {
+      this.setState({
+        errors: error.response.data.message
+      })
+    }
+  }
+
+  render() {
+    console.log('RevenueReport');
+
+    let results = null
+
+    if (this.state.items.length > 0) {
+
+      let rows = this.state.items.map((row) => {
+        return <RevenueRow key={row.id} item={row}/>
+      })
+
+      results = <table className="table time-table">
+          { "" }
+          <tbody>
+            { rows }
+          </tbody>
+        </table>
+    }
+
+    const form = <Form onSubmit={this.onSubmit.bind(this)}>
+        <Input name="from" label="From" type="date"/>
+        <Input name="to" label="To" type="date"/>
+
+        <input className="btn btn-primary" formNoValidate={true} type="submit" defaultValue="Search" />
+      </Form>
+
+    return <div>
+          { form }
+          { results }
+          </div>
+
+  }
+}

@@ -171,7 +171,7 @@ export default class ListView extends React.Component {
 
     let body = null
 
-    if (this.state.items.length == 0) {
+    if (this.state.items && this.state.items.length == 0) {
       body = <Alert color="info">
                 <p>No records in the list</p>
               </Alert>

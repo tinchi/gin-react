@@ -121,6 +121,10 @@ func initializeRoutes(router *gin.Engine) {
 		v1.GET("/users/:id", user.ShowEndpoint)
 		v1.PUT("/users/:id", user.UpdateEndpoint)
 		v1.DELETE("/users/:id", user.DeleteEndpoint)
+
+		revenue := new(controllers.RevenueController)
+
+		v1.POST("/revenue/report", revenue.ReportEndpoint)
 	}
 
 	router.NoRoute(func(c *gin.Context) {

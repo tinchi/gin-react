@@ -21,6 +21,8 @@ import Login from '../components/login'
 import Logout from '../components/logout'
 import Register from '../components/register'
 
+import RevenueReport from '../components/revenue_report'
+
 class PrivateRoute extends Route {
   render() {
     let component = super.render();
@@ -85,6 +87,8 @@ export default class Routes extends React.Component {
         <PrivateRoute exact path="/users" component={UserList} />
         <PrivateRoute exact path="/users/new" component={UserEntryNew} />
         <PrivateRoute exact path="/users/:id/edit" component={UserEdit} />
+
+        <PrivateRoute exact path="/revenue_report" component={RevenueReport} />
       </div>
     </Router>
   }

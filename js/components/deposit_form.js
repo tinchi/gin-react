@@ -6,7 +6,6 @@ import {
 } from 'formsy-react-components';
 
 import axios from 'axios';
-import qs from 'qs';
 
 import {
   Redirect,
