@@ -18,6 +18,18 @@ import auth from '../auth';
 import moment from 'moment'
 
 class RevenueRow extends React.Component {
+  revenueValue(val) {
+    let textColor = "text-primary"
+
+    if (val < 0) {
+      textColor = "text-danger"
+    } else {
+      textColor = "text-success"
+    }
+
+    return <div className={textColor}>{val}</div>
+  }
+
   render() {
     return <tr key={this.props.item.id} className="list-row">
         <td>
@@ -33,7 +45,7 @@ class RevenueRow extends React.Component {
           {this.props.item.revenue_days}
         </td>
         <td>
-          {this.props.item.revenue_amount}
+          {this.revenueValue(this.props.item.revenue_amount)}
         </td>
       </tr>
   }
@@ -53,10 +65,6 @@ export default class RevenueReport extends React.Component {
   }
   onSubmit(data) {
     console.log("onSubmit")
-    console.log({
-      from_date: moment(data.from).format(),
-      to_date: moment(data.from).format()
-    })
 
     axios({
         method: "post",
@@ -93,6 +101,20 @@ export default class RevenueReport extends React.Component {
     }
   }
 
+  renderHeader(cols) {
+    let heads = cols.map((col) => {
+      return <td key={cols.indexOf(col)}>{col}</td>
+    })
+
+    return (
+      <thead>
+        <tr>
+          { heads }
+        </tr>
+      </thead>
+    );
+  }
+
   render() {
     console.log('RevenueReport');
 
@@ -105,16 +127,18 @@ export default class RevenueReport extends React.Component {
       })
 
       results = <table className="table time-table">
-          { "" }
+          { this.renderHeader(['Bank Name', 'Account Number', 'Total Amount', 'Days', 'Revenue', ""]) }
           <tbody>
             { rows }
           </tbody>
         </table>
     }
 
+    const timeNow = moment()
+
     const form = <Form onSubmit={this.onSubmit.bind(this)}>
-        <Input name="from" label="From" type="date"/>
-        <Input name="to" label="To" type="date"/>
+        <Input name="from" label="From" type="date" value={timeNow.format('YYYY-MM-DD')}/>
+        <Input name="to" label="To" type="date" value={timeNow.add(1, 'months').format('YYYY-MM-DD')}/>
 
         <input className="btn btn-primary" formNoValidate={true} type="submit" defaultValue="Search" />
       </Form>

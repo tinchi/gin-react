@@ -57,6 +57,7 @@ func (ctrl RevenueController) ReportEndpoint(c *gin.Context) {
 	err := c.BindJSON(&form)
 
 	if err == nil {
+    // TODO: rewrite with strings.Replace
 		fFromDate := form.FromDate.Format(dateLayout)
 		fToDate := form.ToDate.Format(dateLayout)
 
