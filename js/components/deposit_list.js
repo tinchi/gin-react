@@ -2,6 +2,8 @@ import React from 'react'
 
 import ListView from '../list_view'
 
+import DepositFilter from './deposit_filter'
+
 import {
   Link
 } from 'react-router-dom'
@@ -34,7 +36,7 @@ class DepositRow extends React.Component {
           {this.props.item.account_number}
         </td>
         <td>
-          {this.props.item.ammount}
+          {this.props.item.amount}
         </td>
         <td>
           {this.formatTime(this.props.item.start_date)}
@@ -66,8 +68,9 @@ export default class DepositList extends React.Component {
               title='Deposits'
               url='v1/deposits'
               collection_name='deposits'
-              columns={["Id", 'Bank Name', 'Account Number', 'Ammount', 'Start Date', 'End Date', 'Interest', 'Taxes', ""]}
+              columns={["Id", 'Bank Name', 'Account Number', 'Amount', 'Start Date', 'End Date', 'Interest', 'Taxes', ""]}
               rowClass={DepositRow}
+              filterClass={DepositFilter}
             />;
   }
 }

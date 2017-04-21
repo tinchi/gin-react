@@ -8,7 +8,7 @@ type Deposit struct {
 	Id            int       `json:"id" xorm:"autoincr"`
 	BankName      string    `json:"bank_name" form:"deposit[bank_name]"`
 	AccountNumber string    `json:"account_number" form:"deposit[account_number]"`
-	Ammount       int       `json:"ammount" form:"deposit[ammount]"`
+	Amount        int       `json:"amount" form:"deposit[amount]"`
 	StartDate     time.Time `json:"start_date" form:"deposit[start_date]"`
 	EndDate       time.Time `json:"end_date" form:"deposit[end_date]"`
 	Interest      float32   `json:"interest" form:"deposit[interest]"`

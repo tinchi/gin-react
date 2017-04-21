@@ -1,133 +1,179 @@
 package controllers
 
 import (
-  "fmt"
-  "github.com/gin-gonic/gin"
-  "github.com/tinchi/gin-react/db"
-  "github.com/tinchi/gin-react/models"
-  "net/http"
-  "github.com/tinchi/gin-react/forms"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/tinchi/gin-react/db"
+	"github.com/tinchi/gin-react/forms"
+	"github.com/tinchi/gin-react/models"
+	"net/http"
 )
 
 type DepositController struct{}
 
 func getCurrentUser(c *gin.Context) models.User {
-  current_user, _ := c.Get("current_user")
+	current_user, _ := c.Get("current_user")
 
-  fmt.Println("current_user_id", current_user.(models.User))
+	fmt.Println("current_user_id", current_user.(models.User))
 
-  return current_user.(models.User)
+	return current_user.(models.User)
+}
+
+// * User can filter saving deposits by amount (minimum and maximum), bank name and date.
+type DepositFilter struct {
+	BankName   string `json:"bank_name" form:"bank_name"`
+	AmountMin  int    `json:"amount_from" form:"amount_from"`
+	AmountMax  int    `json:"amount_to" form:"amount_to"`
+	From       string `json:"from" form:"from"`
+	To         string `json:"to" form:"to"`
+	Page       int    `json:"page" form:"page"`
 }
 
 func (ctrl DepositController) IndexEndpoint(c *gin.Context) {
-  var deposits []models.Deposit
+	var deposits []models.Deposit
+	var form DepositFilter
 
-  current_user := getCurrentUser(c)
+	err := c.Bind(&form)
 
-  err := db.Engine.Where("user_id = ?", current_user.Id).Find(&deposits)
+	current_user := getCurrentUser(c)
 
-  if err != nil {
-    fmt.Println(err)
-  }
+	if err != nil {
+		fmt.Println("c.Bind(&form)")
+		fmt.Println(err.Error())
+	}
 
-  if len(deposits) > 0 {
-    c.JSON(http.StatusOK, gin.H{"deposits": deposits, "count": len(deposits)})
-  } else {
-    c.JSON(http.StatusOK, gin.H{"deposits": []models.Deposit{}, "count": len(deposits)})
-  }
+	session := db.Engine.Table("deposits")
+
+	if current_user.Role != "admin" {
+		session.Where("user_id = ?", current_user.Id)
+	}
+
+	if len(form.BankName) != 0 {
+		session.And("bank_name = ?", form.BankName)
+	}
+
+	// if len(form.From) != 0 {
+	// 	session.And("started_data <= ?", form.From)
+	// }
+
+	// if len(form.To) != 0 {
+	// 	session.And("started_data >= ?", form.To)
+	// }
+
+	if form.AmountMax != 0 {
+		session.And("amount <= ?", form.AmountMax)
+	}
+
+	if form.AmountMin != 0 {
+		session.And("amount >= ?", form.AmountMin)
+	}
+
+	fmt.Println(form, form.AmountMax, form.AmountMin)
+
+	err = session.Limit(10, (form.Page-1)*10).Find(&deposits)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if len(deposits) > 0 {
+		c.JSON(http.StatusOK, gin.H{"deposits": deposits})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"deposits": []models.Deposit{}})
+	}
 }
 
 func (ctrl DepositController) CreateEndpoint(c *gin.Context) {
-  var form forms.DepositForm
+	var form forms.DepositForm
 
-  current_user := getCurrentUser(c)
+	current_user := getCurrentUser(c)
 
-  err := c.BindJSON(&form)
+	err := c.BindJSON(&form)
 
-  if err == nil {
-    deposit := models.Deposit{
-      BankName:      form.BankName,
-      AccountNumber: form.AccountNumber,
-      Ammount:       form.Ammount,
-      StartDate:     form.StartDate,
-      EndDate:       form.EndDate,
-      Interest:      form.Interest,
-      Taxes:         form.Taxes,
-      UserId:        current_user.Id,
-    }
+	if err == nil {
+		deposit := models.Deposit{
+			BankName:      form.BankName,
+			AccountNumber: form.AccountNumber,
+			Amount:        form.Amount,
+			StartDate:     form.StartDate,
+			EndDate:       form.EndDate,
+			Interest:      form.Interest,
+			Taxes:         form.Taxes,
+			UserId:        current_user.Id,
+		}
 
-    _, err = db.Engine.Insert(&deposit)
+		_, err = db.Engine.Insert(&deposit)
 
-    if err != nil {
-      panic(err)
-    }
+		if err != nil {
+			panic(err)
+		}
 
-    c.JSON(http.StatusCreated, gin.H{"deposit": deposit})
-  } else {
-    fmt.Println(err)
+		c.JSON(http.StatusCreated, gin.H{"deposit": deposit})
+	} else {
+		fmt.Println(err)
 
-    c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-  }
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	}
 }
 
 func (ctrl DepositController) ShowEndpoint(c *gin.Context) {
-  var deposit models.Deposit
+	var deposit models.Deposit
 
-  id := c.Param("id")
+	id := c.Param("id")
 
-  _, err := db.Engine.Where("deposits.id = ?", id).
-    Get(&deposit)
+	_, err := db.Engine.Where("deposits.id = ?", id).
+		Get(&deposit)
 
-  if err != nil {
-    panic(err)
-  }
+	if err != nil {
+		panic(err)
+	}
 
-  c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+	c.JSON(http.StatusOK, gin.H{"deposit": deposit})
 }
 
 func (ctrl DepositController) UpdateEndpoint(c *gin.Context) {
-  var form forms.DepositForm
+	var form forms.DepositForm
 
-  // current_user := getCurrentUser(c)
-  id := c.Param("id")
-  err := c.BindJSON(&form)
+	// current_user := getCurrentUser(c)
+	id := c.Param("id")
+	err := c.BindJSON(&form)
 
-  if err == nil {
-    deposit := models.Deposit{
-      BankName:      form.BankName,
-      AccountNumber: form.AccountNumber,
-      Ammount:       form.Ammount,
-      StartDate:     form.StartDate,
-      EndDate:       form.EndDate,
-      Interest:      form.Interest,
-      Taxes:         form.Taxes,
-    }
-    _, err = db.Engine.Where("deposits.id = ?", id).
-      Update(&deposit)
+	if err == nil {
+		deposit := models.Deposit{
+			BankName:      form.BankName,
+			AccountNumber: form.AccountNumber,
+			Amount:        form.Amount,
+			StartDate:     form.StartDate,
+			EndDate:       form.EndDate,
+			Interest:      form.Interest,
+			Taxes:         form.Taxes,
+		}
+		_, err = db.Engine.Where("deposits.id = ?", id).
+			Update(&deposit)
 
-    if err != nil {
-      panic(err)
-    }
+		if err != nil {
+			panic(err)
+		}
 
-    c.JSON(http.StatusOK, gin.H{"deposit": deposit})
-  } else {
-    fmt.Println(err)
+		c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+	} else {
+		fmt.Println(err)
 
-    c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-  }
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	}
 }
 
 func (ctrl DepositController) DeleteEndpoint(c *gin.Context) {
-  var deposit models.Deposit
+	var deposit models.Deposit
 
-  id := c.Param("id")
+	id := c.Param("id")
 
-  _, err := db.Engine.Where("deposits.id = ?", id).
-    Delete(&deposit)
+	_, err := db.Engine.Where("deposits.id = ?", id).
+		Delete(&deposit)
 
-  if err != nil {
-    panic(err)
-  }
+	if err != nil {
+		panic(err)
+	}
 
-  c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, gin.H{})
 }

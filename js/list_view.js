@@ -135,20 +135,21 @@ export default class ListView extends React.Component {
   }
 
   renderPaging() {
-    return (
-      <tr><td colSpan={this.props.columns.length}>
-        {this.state.page > 1 &&
-          <button className="btn-go-left btn btn-default" type="button" onClick={this.onPrevPage.bind(this)}>
-            Prev Page
-          </button>
-        }
-        {this.state.items.length === 10 &&
-          <button className="btn-go-right btn btn-default" type="button" onClick={this.onNextPage.bind(this)}>
-            Next Page
-          </button>
-        }
-      </td></tr>
-    );
+    return <tr>
+        <td colSpan={this.props.columns.length}>
+          { this.state.page > 1 &&
+            <button className="btn-go-left btn btn-default" type="button" onClick={this.onPrevPage.bind(this)}>
+              Prev Page
+            </button>
+          }
+          { this.state.items.length === 10 &&
+            <button className="btn-go-right btn btn-default" type="button" onClick={this.onNextPage.bind(this)}>
+              Next Page
+            </button>
+          }
+        </td>
+      </tr>
+
   }
 
   renderRow(row) {
@@ -190,7 +191,7 @@ export default class ListView extends React.Component {
     return (
       <div>
         <h1>{this.props.title}<Link to={`${this.props.collection_name}/new`}>+</Link></h1>
-
+        { this.renderFilters() }
         { body }
 
       </div>

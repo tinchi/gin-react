@@ -32,7 +32,7 @@ export default class DepositForm extends React.Component {
     console.log("submitForm")
     console.log(data)
 
-    data.ammount = parseInt(data.ammount)
+    data.amount = parseInt(data.amount)
     data.interest = parseFloat(data.interest)
     data.taxes = parseFloat(data.taxes)
 
@@ -103,10 +103,10 @@ export default class DepositForm extends React.Component {
                 value={this.props.data.account_number}
             />
             <Input
-                name="ammount"
-                label="Ammount"
+                name="amount"
+                label="Amount"
                 type="number"
-                value={this.props.data.ammount}
+                value={this.props.data.amount}
                 addonAfter={"$"}
             />
             <Input
