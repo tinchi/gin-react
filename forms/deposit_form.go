@@ -9,5 +9,5 @@ type DepositForm struct {
 	StartDate     time.Time `json:"start_date" form:"deposit[start_date]" binding:"required"`
 	EndDate       time.Time `json:"end_date" form:"deposit[end_date]" binding:"required"`
 	Interest      float32   `json:"interest" form:"deposit[interest]" binding:"required"`
-	Taxes         float32   `json:"taxes" form:"deposit[taxes]" binding:"required,min=0""`
+	Taxes         float32   `json:"taxes" form:"deposit[taxes]" binding:"required,min=0,max=100"`
 }
