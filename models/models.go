@@ -8,12 +8,12 @@ type Deposit struct {
 	Id            int       `json:"id" xorm:"autoincr"`
 	BankName      string    `json:"bank_name" form:"deposit[bank_name]"`
 	AccountNumber string    `json:"account_number" form:"deposit[account_number]"`
-	Amount        int       `json:"amount" form:"deposit[amount]"`
-	StartDate     time.Time `json:"start_date" form:"deposit[start_date]"`
-	EndDate       time.Time `json:"end_date" form:"deposit[end_date]"`
+	Amount        int       `xorm:"index" json:"amount" form:"deposit[amount]"`
+	StartDate     time.Time `xorm:"index" json:"start_date" form:"deposit[start_date]"`
+	EndDate       time.Time `xorm:"index" json:"end_date" form:"deposit[end_date]"`
 	Interest      float32   `json:"interest" form:"deposit[interest]"`
 	Taxes         float32   `json:"taxes" form:"deposit[taxes]"`
-	UserId        int       `xorm:"'user_id'" json:"user_id"`
+	UserId        int       `xorm:"index" json:"user_id"`
 	CreatedAt     time.Time `xorm:"created" json:"created_at" `
 }
 
