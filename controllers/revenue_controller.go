@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tinchi/gin-react/db"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -28,7 +29,9 @@ const RevenueSql = `SELECT
       FROM
         deposits
       WHERE
-        start_date < '%s' OR end_date < '%s') AS sb ;`
+        (start_date::date <= GREATEST('%s'::date, '%s'::date) OR end_date::date <= '%s'::date) AND user_id = %s ) AS sb
+    WHERE
+      revenue_days > 0;`
 
 const dateLayout = "2006-01-02"
 
@@ -57,19 +60,28 @@ func (ctrl RevenueController) ReportEndpoint(c *gin.Context) {
 	err := c.BindJSON(&form)
 
 	if err == nil {
-    // TODO: rewrite with strings.Replace
+		// TODO: rewrite with strings.Replace
 		fFromDate := form.FromDate.Format(dateLayout)
 		fToDate := form.ToDate.Format(dateLayout)
+		current_user := getCurrentUser(c)
 
-		sqlQuery := fmt.Sprintf(RevenueSql, fToDate, fFromDate, fFromDate, fToDate)
+		sqlQuery := fmt.Sprintf(RevenueSql, fToDate, fFromDate, fFromDate, fToDate, fFromDate, strconv.Itoa(current_user.Id))
 
 		fmt.Println(sqlQuery)
 
 		err = db.Engine.SQL(sqlQuery).Find(&revenues)
 
-		fmt.Println(err)
+		if err == nil {
+			if revenues == nil {
+				revenues = []Revenue{}
+			}
 
-		c.JSON(http.StatusOK, gin.H{"revenues": revenues})
+			c.JSON(http.StatusOK, gin.H{"revenues": revenues})
+		} else {
+			fmt.Println(err)
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Sorry, i got db error"})
+		}
+
 	} else {
 		fmt.Println(err)
 

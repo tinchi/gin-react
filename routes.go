@@ -33,7 +33,7 @@ func hasPermission(url *url.URL, userRole string) bool {
 
 		return match
 	case "user":
-		match, _ := regexp.MatchString("v1/deposits(/\\d)?", url.Path)
+		match, _ := regexp.MatchString("v1/(deposits(/\\d)?|revenue/report)", url.Path)
 
 		return match
 	default:

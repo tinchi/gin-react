@@ -17,6 +17,10 @@ import auth from '../auth';
 
 import moment from 'moment'
 
+import {
+  Alert
+} from 'reactstrap';
+
 class RevenueRow extends React.Component {
   revenueValue(val) {
     let textColor = "text-primary"
@@ -60,7 +64,8 @@ export default class RevenueReport extends React.Component {
     super(props);
 
     this.state = {
-      items: []
+      items: [],
+      errors: null
     }
   }
   onSubmit(data) {
@@ -85,7 +90,8 @@ export default class RevenueReport extends React.Component {
     console.log(responce.data.revenues)
 
     this.setState({
-      items: responce.data.revenues
+      items: responce.data.revenues,
+      errors: null
     })
   }
 
@@ -143,7 +149,15 @@ export default class RevenueReport extends React.Component {
         <input className="btn btn-primary" formNoValidate={true} type="submit" defaultValue="Search" />
       </Form>
 
+    let errors = null;
+    if (this.state.errors != null) {
+      errors = <Alert color="danger">
+                <p>{this.state.errors}</p>
+              </Alert>
+    }
+
     return <div>
+          { errors }
           { form }
           { results }
           </div>
