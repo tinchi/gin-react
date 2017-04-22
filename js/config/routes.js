@@ -23,6 +23,14 @@ import Register from '../components/register'
 
 import RevenueReport from '../components/revenue_report'
 
+import {
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem
+} from 'reactstrap';
+
 class PrivateRoute extends Route {
   canAccess() {
     if (!auth.isAuthenticated()) {
@@ -78,32 +86,50 @@ class NavBar extends React.Component {
     switch (auth.getRole()) {
       case 'user':
         console.log('user')
-        links = [<li><Link to="/deposits">Deposits</Link></li>, <li><Link to="/revenue_report">Revenue Report</Link></li>]
+        links = [<NavItem><Link className="nav-link" to="/deposits">Deposits</Link></NavItem>, <NavItem><Link className="nav-link"  to="/revenue_report">Revenue Report</Link></NavItem>]
         break;
       case 'manager':
-        links = [<li><Link to="/users">Users</Link></li>]
+        links = [<NavItem><Link className="nav-link" to="/users">Users</Link></NavItem>]
         break;
       case 'admin':
-        links = [<li><Link to="/deposits">Deposits</Link></li>, <li><Link to="/users">Users</Link></li>]
+        links = [<NavItem><Link className="nav-link" to="/deposits">Deposits</Link></NavItem>, <NavItem><Link className="nav-link"  to="/users">Users</Link></NavItem>]
         break;
     }
 
     console.log(links)
 
-    return <ul>
-          { auth.isAuthenticated() ? (
-            <div>
-              { auth.getEmail() } [ { auth.getRole() }]
-              <li><Link to="/logout">Logout</Link></li>
-              { links }
-            </div>
-          ) : (
-            <div>
-              <li><Link to="/login">Login</Link></li>
-              <li><Link to="/register">Register</Link></li>
-            </div>
-          )}
-        </ul>
+    return <div>
+        <Navbar color="faded" light toggleable>
+          <NavbarBrand href="/">Deposit Manager</NavbarBrand>
+
+          <Nav left className="ml-auto" navbar>
+            { links }
+          </Nav>
+
+            {
+      auth.isAuthenticated() ? (
+          <Nav className="ml-auto" navbar>
+              <NavItem>
+                <NavLink href="#">{ auth.getEmail() }[{ auth.getRole()}]</NavLink>
+              </NavItem>
+
+              <NavItem>
+                <Link className="nav-link" to="/logout">Logout</Link>
+              </NavItem>
+            </Nav>
+      ) : (
+        <Nav className="ml-auto" navbar>
+            <NavItem>
+              <Link className="nav-link" to="/login">Login</Link>
+            </NavItem>
+            <NavItem>
+              <Link className="nav-link" to="/register">Register</Link>
+            </NavItem>
+            </Nav>
+      )
+    }
+        </Navbar>
+      </div>
   }
 }
 
