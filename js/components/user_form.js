@@ -85,6 +85,17 @@ export default class DepositForm extends React.Component {
       label: 'Admin'
     }]
 
+    let passwordField = null
+    if (this.props.noPassword && !this.props.noPassword) {
+      passwordField = <Input
+                name="password"
+                label="Password"
+                type="password"
+                required
+                value={this.props.data.password}
+            />
+    }
+
     return <Form onSubmit={this.submitForm.bind(this)}>
             { errors }
             <Input
@@ -101,13 +112,7 @@ export default class DepositForm extends React.Component {
                 value={this.props.data.email}
             />
 
-            <Input
-                name="password"
-                label="Password"
-                type="password"
-                required
-                value={this.props.data.password}
-            />
+            { passwordField }
 
             <Select
                 name="role"

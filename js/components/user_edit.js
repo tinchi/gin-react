@@ -41,6 +41,7 @@ export default class UserEdit extends React.Component {
     return <UserForm
             url={ this.userUrl() }
             method={"put"}
+            noPassword={true}
             data={this.state.data}/>
   }
 }
