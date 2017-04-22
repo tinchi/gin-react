@@ -47,13 +47,21 @@ module.exports = {
     this.isAuthenticated() && this.getRole() == 'manager'
   },
 
+  tockenExpired() {
+    return new Date(localStorage.expire) < new Date()
+  },
+
   logout(cb) {
-    delete localStorage.token
+    delete localStorage.clear()
     if (cb) cb()
   },
 
   isAuthenticated() {
-    console.log('isAuthenticated', !!localStorage.token)
+    if (this.tockenExpired()) {
+      this.logout()
+      return false
+    }
+
     return !!localStorage.token
   },
 
@@ -61,6 +69,6 @@ module.exports = {
     return {
       "Authorization": "Bearer " + this.getToken()
     }
-  },
+  }
 
 }

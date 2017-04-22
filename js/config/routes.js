@@ -77,18 +77,23 @@ class NavBar extends React.Component {
 
     switch (auth.getRole()) {
       case 'user':
+        console.log('user')
         links = [<li><Link to="/deposits">Deposits</Link></li>, <li><Link to="/revenue_report">Revenue Report</Link></li>]
+        break;
       case 'manager':
         links = [<li><Link to="/users">Users</Link></li>]
+        break;
       case 'admin':
         links = [<li><Link to="/deposits">Deposits</Link></li>, <li><Link to="/users">Users</Link></li>]
+        break;
     }
 
-    return <ul>
-          { auth.getEmail() } [{ auth.getRole() }]
+    console.log(links)
 
+    return <ul>
           { auth.isAuthenticated() ? (
             <div>
+              { auth.getEmail() } [ { auth.getRole() }]
               <li><Link to="/logout">Logout</Link></li>
               { links }
             </div>
