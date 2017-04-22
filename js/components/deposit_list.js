@@ -36,7 +36,7 @@ class DepositRow extends React.Component {
           {this.props.item.account_number}
         </td>
         <td>
-          {this.props.item.amount}
+          {this.props.item.amount}$
         </td>
         <td>
           {this.formatTime(this.props.item.start_date)}
@@ -45,10 +45,10 @@ class DepositRow extends React.Component {
           {this.formatTime(this.props.item.end_date)}
         </td>
         <td>
-          {this.props.item.interest}
+          {this.props.item.interest}%
         </td>
         <td>
-          {this.props.item.taxes}
+          {this.props.item.taxes}%
         </td>
         <td>
           <Button color="info"><Link to={'/deposits/' + this.props.item.id + '/edit'}>edit</Link></Button>{' '}

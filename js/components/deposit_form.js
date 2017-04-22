@@ -19,6 +19,20 @@ import {
   Alert
 } from 'reactstrap';
 
+import Formsy from 'formsy-react';
+
+Formsy.addValidationRule('isLessThan100', (values, value) => {
+  return value < 100
+})
+
+Formsy.addValidationRule('beforeEndDate', (values, value) => {
+  return moment(value).diff(values.end_date, 'days') < 0
+})
+
+Formsy.addValidationRule('beforeStartDate', (values, value) => {
+  return moment(value).diff(values.start_date, 'days') > 0
+})
+
 export default class DepositForm extends React.Component {
   constructor(props) {
     super(props)
@@ -70,6 +84,16 @@ export default class DepositForm extends React.Component {
   toTime(date) {
     return moment(date).format()
   }
+  enableSubmit() {
+    this.setState({
+      canSubmit: true
+    })
+  }
+  disableSubmit() {
+    this.setState({
+      canSubmit: false
+    })
+  }
 
   render() {
     console.log("DepositEditForm render()")
@@ -89,7 +113,7 @@ export default class DepositForm extends React.Component {
               </Alert>
     }
 
-    return <Form onSubmit={this.submitForm.bind(this)}>
+    return <Form onSubmit={this.submitForm.bind(this)} onValid={this.enableSubmit.bind(this)} onInvalid={this.disableSubmit.bind(this)} >
             { errors }
               <Input
                 name="bank_name"
@@ -109,6 +133,10 @@ export default class DepositForm extends React.Component {
                 type="number"
                 value={this.props.data.amount}
                 addonAfter={"$"}
+                validations="isNumeric"
+                validationErrors={{
+                      beforeEndDate: 'Should be a number'
+                  }}
                 required
             />
             <Input
@@ -118,6 +146,10 @@ export default class DepositForm extends React.Component {
                   value={toDate(this.props.data.start_date)}
                   placeholder="This is a date input."
                   required
+                  validations="beforeEndDate"
+                  validationErrors={{
+                      beforeEndDate: 'Should be before End Date'
+                  }}
               />
               <Input
                   name="end_date"
@@ -125,6 +157,10 @@ export default class DepositForm extends React.Component {
                   label="End Date"
                   type="date"
                   placeholder="This is a date input."
+                  validations="beforeStartDate"
+                  validationErrors={{
+                      beforeStartDate: 'Should be after StartDate'
+                  }}
                   required
               />
               <Input
@@ -141,10 +177,15 @@ export default class DepositForm extends React.Component {
                 value={this.props.data.taxes}
                 type="number"
                 addonAfter={"%"}
+                validations="isLessThan100"
+                validationErrors={{
+                    isLessThan100: 'Should be less than 100'
+                }}
                 required
+
             />
 
-            <input className="btn btn-primary" type="submit" defaultValue="Submit" />
+            <input disabled={!this.state.canSubmit} className="btn btn-primary" type="submit" defaultValue="Submit" />
         </Form>
   }
 }
