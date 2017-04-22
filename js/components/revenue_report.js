@@ -128,6 +128,13 @@ export default class RevenueReport extends React.Component {
 
     if (this.state.items.length > 0) {
 
+      const sumItem = {
+        bank_name: "Total Sum",
+        revenue_amount: this.state.items.reduce((acc, val) => {
+          return acc + val.revenue_amount;
+        }, 0)
+      }
+
       let rows = this.state.items.map((row) => {
         return <RevenueRow key={row.id} item={row}/>
       })
@@ -136,6 +143,7 @@ export default class RevenueReport extends React.Component {
           { this.renderHeader(['Bank Name', 'Account Number', 'Total Amount', 'Days', 'Revenue', ""]) }
           <tbody>
             { rows }
+            <RevenueRow key={"-"} item={sumItem}/>
           </tbody>
         </table>
     }
