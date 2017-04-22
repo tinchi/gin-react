@@ -12,6 +12,12 @@ import (
 
 type UserController struct{}
 
+func (ctrl UserController) MeEndpoint(c *gin.Context) {
+	current_user := getCurrentUser(c)
+
+	c.JSON(http.StatusOK, gin.H{"email": current_user.Email, "role": current_user.Role})
+}
+
 func (ctrl UserController) IndexEndpoint(c *gin.Context) {
 	var users []models.User
 

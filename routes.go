@@ -17,6 +17,14 @@ import (
 func hasPermission(url *url.URL, userRole string) bool {
 	fmt.Println(url.Path, userRole)
 
+	matchUserMe, _ := regexp.MatchString("v1/user/me", url.Path)
+
+	fmt.Println(matchUserMe)
+
+	if matchUserMe == true {
+		return true
+	}
+
 	switch userRole {
 	case "admin":
 		return true
@@ -99,7 +107,6 @@ func initializeRoutes(router *gin.Engine) {
 	auth := new(controllers.AuthController)
 
 	router.POST("/auth/login", authMiddleware.LoginHandler)
-	// router.POST("/auth/login", auth.LoginEndpoint)
 	router.POST("/auth/register", auth.RegisterEndpoint)
 
 	v1 := router.Group("/v1")
@@ -121,6 +128,8 @@ func initializeRoutes(router *gin.Engine) {
 		v1.GET("/users/:id", user.ShowEndpoint)
 		v1.PUT("/users/:id", user.UpdateEndpoint)
 		v1.DELETE("/users/:id", user.DeleteEndpoint)
+
+		v1.GET("/user/me", user.MeEndpoint)
 
 		revenue := new(controllers.RevenueController)
 

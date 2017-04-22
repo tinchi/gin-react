@@ -12,7 +12,18 @@ module.exports = {
           localStorage.expire = res.data.expire
         }
 
-        callback(true)
+        axios.get('/v1/user/me', {
+          "headers": this.getAuthHeaders()
+        }).then((res) => {
+          if (res) {
+            localStorage.email = res.data.email
+            localStorage.role = res.data.role
+          }
+
+          callback(true)
+
+        })
+
       }).catch(onError.bind(this))
   },
 
@@ -20,7 +31,7 @@ module.exports = {
     return localStorage.token
   },
 
-  getCurrentUserEmail() {
+  getEmail() {
     return localStorage.email
   },
 
