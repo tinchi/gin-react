@@ -46,9 +46,6 @@ class RevenueRow extends React.Component {
           {this.props.item.amount}
         </td>
         <td>
-          {this.props.item.revenue_days}
-        </td>
-        <td>
           {this.revenueValue(this.props.item.revenue_amount)}
         </td>
       </tr>
@@ -140,7 +137,7 @@ export default class RevenueReport extends React.Component {
       })
 
       results = <table className="table time-table">
-          { this.renderHeader(['Bank Name', 'Account Number', 'Total Amount', 'Days', 'Revenue', ""]) }
+          { this.renderHeader(['Bank Name', 'Account Number', 'Total Amount', 'Revenue']) }
           <tbody>
             { rows }
             <RevenueRow key={"-"} item={sumItem}/>

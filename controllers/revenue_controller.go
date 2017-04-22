@@ -48,8 +48,6 @@ type Revenue struct {
 	AccountNumber string  `json:"account_number"`
 	Amount        int     `json:"amount"`
 	RevenueDays   int     `json:"revenue_days"`
-	Interest      float32 `json:"interest"`
-	Taxes         float32 `json:"taxes"`
 	RevenueAmount float32 `json:"revenue_amount"`
 }
 
