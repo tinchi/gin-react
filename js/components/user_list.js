@@ -31,7 +31,7 @@ class UserRow extends React.Component {
           {this.props.item.role}
         </td>
         <td>
-          <Button color="info" onClick={this.delete.bind(this)}><Link to={'/users/' + this.props.item.id + '/edit'}>edit</Link></Button>{' '}
+          <Button color="info"><Link to={'/users/' + this.props.item.id + '/edit'}>edit</Link></Button>{' '}
         </td>
         <td>
           <Button color="danger" onClick={this.delete.bind(this)}>remove</Button>{' '}
