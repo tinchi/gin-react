@@ -1,13 +1,13 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/tinchi/gin-react/db"
 	"github.com/tinchi/gin-react/forms"
 	"github.com/tinchi/gin-react/models"
 	"net/http"
-	"errors"
 )
 
 type DepositController struct{}
@@ -18,6 +18,13 @@ func getCurrentUser(c *gin.Context) models.User {
 	fmt.Println("current_user_id", current_user.(models.User))
 
 	return current_user.(models.User)
+}
+
+func unauthorized(c *gin.Context) {
+	c.JSON(http.StatusUnauthorized, gin.H{
+		"code":    http.StatusUnauthorized,
+		"message": "You don't have permission to access.",
+	})
 }
 
 // * User can filter saving deposits by amount (minimum and maximum), bank name and date.
@@ -128,44 +135,70 @@ func (ctrl DepositController) ShowEndpoint(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := db.Engine.Where("id = ?", id).
-		Get(&deposit)
+	if checkOwner(c, id) {
+		_, err := db.Engine.Where("id = ?", id).
+			Get(&deposit)
 
-	if err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
+
+		c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+
+	} else {
+		unauthorized(c)
 	}
+}
 
-	c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+func checkOwner(c *gin.Context, id string) bool {
+	current_user := getCurrentUser(c)
+
+	if current_user.Role == "admin" {
+		return true
+	} else {
+		id := c.Param("id")
+
+		var ownerId int
+		_, _ = db.Engine.Table("deposits").Where("id = ?", id).Cols("user_id").Get(&ownerId)
+		fmt.Println(ownerId, current_user.Id)
+
+		return ownerId == current_user.Id
+	}
 }
 
 func (ctrl DepositController) UpdateEndpoint(c *gin.Context) {
 	var form forms.DepositForm
 
 	id := c.Param("id")
-	err := c.BindJSON(&form)
 
-	if err == nil {
-		deposit := models.Deposit{
-			BankName:      form.BankName,
-			AccountNumber: form.AccountNumber,
-			Amount:        form.Amount,
-			StartDate:     form.StartDate,
-			EndDate:       form.EndDate,
-			Interest:      form.Interest,
-			Taxes:         form.Taxes,
-		}
-		_, err = db.Engine.Where("id = ?", id).
-			Update(&deposit)
+	if checkOwner(c, id) {
+		err := c.BindJSON(&form)
 
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		if err == nil {
+			deposit := models.Deposit{
+				BankName:      form.BankName,
+				AccountNumber: form.AccountNumber,
+				Amount:        form.Amount,
+				StartDate:     form.StartDate,
+				EndDate:       form.EndDate,
+				Interest:      form.Interest,
+				Taxes:         form.Taxes,
+			}
+			_, err = db.Engine.Where("id = ?", id).
+				Update(&deposit)
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			} else {
+				c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+			}
 		} else {
-			c.JSON(http.StatusOK, gin.H{"deposit": deposit})
+			fmt.Println(err)
+
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid form parameters."})
 		}
 	} else {
-		fmt.Println(err)
-
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid form parameters."})
+		unauthorized(c)
 	}
 }
 
@@ -174,12 +207,16 @@ func (ctrl DepositController) DeleteEndpoint(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := db.Engine.Where("deposits.id = ?", id).
-		Delete(&deposit)
+	if checkOwner(c, id) {
+		_, err := db.Engine.Where("deposits.id = ?", id).
+			Delete(&deposit)
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		} else {
+			c.JSON(http.StatusOK, gin.H{})
+		}
 	} else {
-		c.JSON(http.StatusOK, gin.H{})
+		unauthorized(c)
 	}
 }
