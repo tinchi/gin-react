@@ -24,6 +24,7 @@ import Register from '../components/register'
 import RevenueReport from '../components/revenue_report'
 
 import {
+  NavLink,
   Navbar,
   NavbarToggler,
   NavbarBrand,
@@ -96,18 +97,16 @@ class NavBar extends React.Component {
         break;
     }
 
-    console.log(links)
-
     return <div>
         <Navbar color="faded" light toggleable>
           <NavbarBrand href="/">Deposit Manager</NavbarBrand>
 
-          <Nav left className="ml-auto" navbar>
+          <Nav className="ml-auto" navbar>
             { links }
           </Nav>
 
-            {
-      auth.isAuthenticated() ? (
+          {
+            auth.isAuthenticated() ? (
           <Nav className="ml-auto" navbar>
               <NavItem>
                 <NavLink href="#">{ auth.getEmail() }[{ auth.getRole()}]</NavLink>
