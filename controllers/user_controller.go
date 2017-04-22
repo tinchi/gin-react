@@ -8,6 +8,7 @@ import (
 	"github.com/tinchi/gin-react/models"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"strconv"
 )
 
 type UserController struct{}
@@ -21,13 +22,15 @@ func (ctrl UserController) MeEndpoint(c *gin.Context) {
 func (ctrl UserController) IndexEndpoint(c *gin.Context) {
 	var users []models.User
 
-	err := db.Engine.Find(&users)
+	page, _ := strconv.Atoi(c.Param("page"))
+
+	err := db.Engine.Limit(10, (page-1)*10).Find(&users)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"users": users, "count": len(users)})
+	c.JSON(http.StatusOK, gin.H{"users": users})
 }
 
 func (ctrl UserController) CreateEndpoint(c *gin.Context) {
