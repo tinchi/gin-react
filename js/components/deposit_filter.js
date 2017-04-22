@@ -6,7 +6,8 @@ import {
 
 import {
   Alert,
-  Button
+  Button,
+  Col
 } from 'reactstrap';
 
 import {
@@ -27,23 +28,19 @@ export default class DepositFilter extends React.Component {
     this.props.onFilterChanged(data);
   }
 
-  clear() {
-    this.refs.from.value = this.refs.to.value = "";
-    this.filter()
-  }
-
   render() {
-    return <Form className="form-inline" onSubmit={this.filter.bind(this)}>
-        <Input name="from" label="From" type="date"/>
+    return <Form onSubmit={this.filter.bind(this)}>
+        <Input name="bank_name" label="Bank Name" value=""/>
+
+        <Input name="from" label="Starts From" type="date"/>
         <Input name="to" label="To" type="date"/>
 
-        <Input name="amount_from" label="Amount" value="0" />
-        <Input name="amount_to" label="To" value="1000" />
+        <Input name="amount_from" label="Min. amount" value="" />
+        <Input name="amount_to" label="Max. amount" value="" />
 
-        <input className="btn btn-primary" formNoValidate={true} type="submit" defaultValue="Search" />
-
-        {/*<Button color="info" onClick={this.filter.bind(this)}>Search</Button>{' '}*/}
-        {/*<Button color="info" onClick={this.clear.bind(this)}>Clear</Button>{' '}*/}
+        <Col sm={10}>
+            <input className="btn btn-primary" formNoValidate={true} type="submit" defaultValue="Search" />
+        </Col>
       </Form>
   }
 }

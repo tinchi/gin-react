@@ -97,8 +97,7 @@ class NavBar extends React.Component {
         break;
     }
 
-    return <div>
-        <Navbar color="faded" light toggleable>
+    return <Navbar color="faded" light toggleable>
           <NavbarBrand href="/">Deposit Manager</NavbarBrand>
 
           <Nav className="ml-auto" navbar>
@@ -128,7 +127,6 @@ class NavBar extends React.Component {
       )
     }
         </Navbar>
-      </div>
   }
 }
 

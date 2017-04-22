@@ -51,7 +51,7 @@ class DepositRow extends React.Component {
           {this.props.item.taxes}
         </td>
         <td>
-          <Button color="info" onClick={this.delete.bind(this)}><Link to={'/deposits/' + this.props.item.id + '/edit'}>edit</Link></Button>{' '}
+          <Button color="info"><Link to={'/deposits/' + this.props.item.id + '/edit'}>edit</Link></Button>{' '}
         </td>
         <td>
           <Button color="danger" onClick={this.delete.bind(this)}>remove</Button>{' '}

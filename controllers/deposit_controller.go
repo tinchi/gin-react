@@ -52,13 +52,13 @@ func (ctrl DepositController) IndexEndpoint(c *gin.Context) {
 		session.And("bank_name = ?", form.BankName)
 	}
 
-	// if len(form.From) != 0 {
-	// 	session.And("started_data <= ?", form.From)
-	// }
+	if len(form.From) != 0 {
+		session.And("start_date >= ?", form.From)
+	}
 
-	// if len(form.To) != 0 {
-	// 	session.And("started_data >= ?", form.To)
-	// }
+	if len(form.To) != 0 {
+		session.And("start_date <= ?", form.To)
+	}
 
 	if form.AmountMax != 0 {
 		session.And("amount <= ?", form.AmountMax)
@@ -120,10 +120,8 @@ func (ctrl DepositController) ShowEndpoint(c *gin.Context) {
 	var deposit models.Deposit
 
 	id := c.Param("id")
-	current_user := getCurrentUser(c)
 
 	_, err := db.Engine.Where("id = ?", id).
-		And("user_id = ?", current_user.Id).
 		Get(&deposit)
 
 	if err != nil {
@@ -136,7 +134,6 @@ func (ctrl DepositController) ShowEndpoint(c *gin.Context) {
 func (ctrl DepositController) UpdateEndpoint(c *gin.Context) {
 	var form forms.DepositForm
 
-	current_user := getCurrentUser(c)
 	id := c.Param("id")
 	err := c.BindJSON(&form)
 
@@ -151,7 +148,6 @@ func (ctrl DepositController) UpdateEndpoint(c *gin.Context) {
 			Taxes:         form.Taxes,
 		}
 		_, err = db.Engine.Where("id = ?", id).
-			And("user_id = ?", current_user.Id).
 			Update(&deposit)
 
 		if err != nil {
@@ -170,10 +166,8 @@ func (ctrl DepositController) DeleteEndpoint(c *gin.Context) {
 	var deposit models.Deposit
 
 	id := c.Param("id")
-	current_user := getCurrentUser(c)
 
 	_, err := db.Engine.Where("deposits.id = ?", id).
-		And("user_id = ?", current_user.Id).
 		Delete(&deposit)
 
 	if err != nil {
