@@ -7,6 +7,7 @@ import (
 	"github.com/tinchi/gin-react/forms"
 	"github.com/tinchi/gin-react/models"
 	"net/http"
+	"errors"
 )
 
 type DepositController struct{}
@@ -90,7 +91,13 @@ func (ctrl DepositController) CreateEndpoint(c *gin.Context) {
 
 	err := c.BindJSON(&form)
 
+	if form.StartDate.After(form.EndDate) {
+		err = errors.New("Start date should be before end date")
+	}
+
 	if err == nil {
+		fmt.Println(form.StartDate.Before(form.EndDate))
+
 		deposit := models.Deposit{
 			BankName:      form.BankName,
 			AccountNumber: form.AccountNumber,

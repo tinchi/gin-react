@@ -95,11 +95,13 @@ export default class DepositForm extends React.Component {
                 name="bank_name"
                 label="Bank Name"
                 value={this.props.data.bank_name}
+                required
             />
             <Input
                 name="account_number"
                 label="Account Number"
                 value={this.props.data.account_number}
+                required
             />
             <Input
                 name="amount"
@@ -107,6 +109,7 @@ export default class DepositForm extends React.Component {
                 type="number"
                 value={this.props.data.amount}
                 addonAfter={"$"}
+                required
             />
             <Input
                   name="start_date"
@@ -130,6 +133,7 @@ export default class DepositForm extends React.Component {
                 label="Interest"
                 type="number"
                 addonAfter={"%"}
+                required
             />
             <Input
                 name="taxes"
@@ -137,9 +141,10 @@ export default class DepositForm extends React.Component {
                 value={this.props.data.taxes}
                 type="number"
                 addonAfter={"%"}
+                required
             />
 
-            <input className="btn btn-primary" formNoValidate={true} type="submit" defaultValue="Submit" />
+            <input className="btn btn-primary" type="submit" defaultValue="Submit" />
         </Form>
   }
 }

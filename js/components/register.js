@@ -72,25 +72,31 @@ export default class Register extends React.Component {
               </Alert>
     }
 
-    return <Form onSubmit={this.onSubmit.bind(this)}>
-              REGISTER
+    return <Form onSubmit={this.onSubmit.bind(this)} validateOnSubmit={true}>
               { errors }
               <Input
                 name="name"
                 label="Name"
+                required
               />
               <Input
                 name="email"
                 label="Email"
+                required
+                validations="isEmail"
+                validationErrors={{
+                    isEmail: 'This doesn’t look like an email address.'
+                }}
               />
 
               <Input
                 name="password"
                 label="Password"
                 type="password"
+                required
               />
 
-               <input className="btn btn-primary" formNoValidate={true} type="submit" defaultValue="Submit" />
+               <input className="btn btn-primary" type="submit" defaultValue="Submit" />
         </Form>
   }
 }

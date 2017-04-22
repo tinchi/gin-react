@@ -86,6 +86,7 @@ export default class DepositForm extends React.Component {
     }]
 
     let passwordField = null
+
     if (this.props.noPassword && !this.props.noPassword) {
       passwordField = <Input
                 name="password"
@@ -110,6 +111,10 @@ export default class DepositForm extends React.Component {
                 label="Email"
                 required
                 value={this.props.data.email}
+                validations="isEmail"
+                validationErrors={{
+                    isEmail: 'This doesn’t look like an email address.'
+                }}
             />
 
             { passwordField }
@@ -122,7 +127,7 @@ export default class DepositForm extends React.Component {
                 required
             />
 
-            <input className="btn btn-primary" formNoValidate={true} type="submit" defaultValue="Submit" />
+            <input className="btn btn-primary" type="submit" defaultValue="Submit" />
         </Form>
   }
 }
