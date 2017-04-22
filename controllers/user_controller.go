@@ -107,7 +107,7 @@ func (ctrl UserController) UpdateEndpoint(c *gin.Context) {
 	} else {
 		fmt.Println(err)
 
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid form parameters."})
 	}
 }
 
