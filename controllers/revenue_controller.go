@@ -85,6 +85,6 @@ func (ctrl RevenueController) ReportEndpoint(c *gin.Context) {
 	} else {
 		fmt.Println(err)
 
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Wrong parameters"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid form parameters."})
 	}
 }

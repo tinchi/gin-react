@@ -112,7 +112,7 @@ func (ctrl DepositController) CreateEndpoint(c *gin.Context) {
 	} else {
 		fmt.Println(err)
 
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid form parameters."})
 	}
 }
 
@@ -120,8 +120,10 @@ func (ctrl DepositController) ShowEndpoint(c *gin.Context) {
 	var deposit models.Deposit
 
 	id := c.Param("id")
+	current_user := getCurrentUser(c)
 
-	_, err := db.Engine.Where("deposits.id = ?", id).
+	_, err := db.Engine.Where("id = ?", id).
+		And("user_id = ?", current_user.Id).
 		Get(&deposit)
 
 	if err != nil {
@@ -134,7 +136,7 @@ func (ctrl DepositController) ShowEndpoint(c *gin.Context) {
 func (ctrl DepositController) UpdateEndpoint(c *gin.Context) {
 	var form forms.DepositForm
 
-	// current_user := getCurrentUser(c)
+	current_user := getCurrentUser(c)
 	id := c.Param("id")
 	err := c.BindJSON(&form)
 
@@ -148,18 +150,19 @@ func (ctrl DepositController) UpdateEndpoint(c *gin.Context) {
 			Interest:      form.Interest,
 			Taxes:         form.Taxes,
 		}
-		_, err = db.Engine.Where("deposits.id = ?", id).
+		_, err = db.Engine.Where("id = ?", id).
+			And("user_id = ?", current_user.Id).
 			Update(&deposit)
 
 		if err != nil {
-			panic(err)
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		} else {
+			c.JSON(http.StatusOK, gin.H{"deposit": deposit})
 		}
-
-		c.JSON(http.StatusOK, gin.H{"deposit": deposit})
 	} else {
 		fmt.Println(err)
 
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid form parameters."})
 	}
 }
 
@@ -167,13 +170,15 @@ func (ctrl DepositController) DeleteEndpoint(c *gin.Context) {
 	var deposit models.Deposit
 
 	id := c.Param("id")
+	current_user := getCurrentUser(c)
 
 	_, err := db.Engine.Where("deposits.id = ?", id).
+		And("user_id = ?", current_user.Id).
 		Delete(&deposit)
 
 	if err != nil {
-		panic(err)
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{})
 	}
-
-	c.JSON(http.StatusOK, gin.H{})
 }
